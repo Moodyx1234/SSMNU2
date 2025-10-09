@@ -17,6 +17,7 @@
             --color-secondary: #1d4ed8; /* Blue 700 */
             --color-accent: #34d399; /* Emerald 400 */
             --color-background-light: #f8fafc; /* Slate 50 */
+            --overlay-color: rgba(15, 23, 42, 0.75); /* Dark overlay for text clarity */
         }
         
         body {
@@ -73,21 +74,35 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* New Hero Background Styling: Gradient and subtle texture */
+        /* NEW HERO BACKGROUND STYLING WITH IMAGE AND OVERLAY */
         .hero-bg {
-            background-image: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+            background-image: url('NU.jpg');
+            background-size: cover;
+            /* EDITED: Position image from the top */
+            background-position: center top; 
+            background-repeat: no-repeat;
             position: relative;
             overflow: hidden;
         }
-        .hero-bg::after {
+        
+        /* Overlay to darken the image and make text readable */
+        .hero-bg::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: radial-gradient(circle at 100% 0%, rgba(52, 211, 153, 0.2) 0%, transparent 40%);
+            background-color: var(--overlay-color);
+            z-index: 1; /* Ensure overlay is behind content but above background image */
         }
+
+        /* Ensure content is above the overlay */
+        .hero-bg > .container {
+            position: relative;
+            z-index: 2; 
+        }
+        /* END NEW HERO BACKGROUND STYLING */
 
         /* Timeline styling */
         .timeline-item {
@@ -185,6 +200,7 @@
                 
                 <!-- Marathon Logo (Event Brand) -->
                 <a href="#" class="flex items-center">
+                    <!-- Updated image source path -->
                     <img src="marathon_logo.png" alt="شعار الماراثون العلمي الطلابي" class="h-16 w-auto rounded-full shadow-md">
                 </a>
             </div>
@@ -230,7 +246,7 @@
         ========================================
     -->
     <div id="landing-view" class="page-view">
-        <!-- Hero Section - New Style -->
+        <!-- Hero Section - New Style with Image Background -->
         <section id="top" class="hero-bg text-white pt-24 pb-16 md:pt-32 md:pb-24">
             <div class="container mx-auto px-4 text-center relative z-20">
                 <h2 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
