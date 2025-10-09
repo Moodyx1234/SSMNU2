@@ -817,7 +817,7 @@
             <div class="container mx-auto px-4 text-center text-sm">
                 <!-- Visit Counter Display -->
                 <p class="text-gray-400 mb-2">
-                    أنت الزائر رقم: <span id="visit-count" class="font-bold text-emerald-400">1</span>
+                    العدد الكلي للزوار: <span id="visit-count" class="font-bold text-emerald-400">Loading...</span>
                 </p>
                 <p>&copy; 2025 الماراثون العلمي الطلابي. جميع الحقوق محفوظة.</p>
                 <div class="grid grid-cols-2 lg:grid-cols-10 gap-x-2 gap-y-1 mt-2 mx-auto max-w-lg lg:max-w-full">
@@ -880,21 +880,37 @@
                 createDigitBox(seconds, 'ثانية');
         }
 
-        // Function to handle local visit counter
-        function initializeVisitCounter() {
+        // NEW FUNCTION: Global Visit Counter using CountAPI
+        function updateGlobalVisitCounter() {
             const counterElement = document.getElementById('visit-count');
-            if (counterElement) {
-                // IMPORTANT: This counter uses localStorage, so it only tracks visits per user/browser. 
-                // A true global counter requires a server-side component.
-                let visitCount = localStorage.getItem('marathonVisitCount');
-                if (visitCount === null) {
-                    visitCount = 1;
-                } else {
-                    visitCount = parseInt(visitCount) + 1;
-                }
-                localStorage.setItem('marathonVisitCount', visitCount);
-                counterElement.textContent = `${visitCount}`;
-            }
+            const namespace = 'scientific_marathon_visits'; // Unique identifier for the website
+
+            if (!counterElement) return;
+
+            // Check if the user has visited recently using session storage
+            const hasVisited = sessionStorage.getItem('marathonSessionVisited');
+            
+            // Determine API endpoint: hit and get if new session, just get if repeated session
+            const apiEndpoint = hasVisited ? 
+                                `https://api.countapi.xyz/get/${namespace}/marathon` : 
+                                `https://api.countapi.xyz/hit/${namespace}/marathon`;
+
+            fetch(apiEndpoint)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.value !== undefined) {
+                        counterElement.textContent = data.value.toLocaleString('en-US'); // Use en-US for simple comma separation if needed
+                        // Mark as visited in this session
+                        if (!hasVisited) {
+                             sessionStorage.setItem('marathonSessionVisited', 'true');
+                        }
+                    } else {
+                        counterElement.textContent = 'Error';
+                    }
+                })
+                .catch(() => {
+                    counterElement.textContent = 'Failed to load';
+                });
         }
 
         // Function to toggle the mobile menu dropdown
@@ -981,8 +997,8 @@
             // Run the countdown immediately and then every second
             updateCountdown();
             setInterval(updateCountdown, 1000);
-            // Initialize the visit counter
-            initializeVisitCounter();
+            // Initialize the global visit counter
+            updateGlobalVisitCounter();
         });
 
     </script>
