@@ -147,13 +147,11 @@
                 
                 <!-- Marathon Logo (Event Brand) - Corrected relative path for self-contained file -->
                 <a href="#" class="flex items-center">
-                    <img src="marathon_logo.png" alt="شعار الماراثون العلمي الطلابي" class="h-16 w-auto rounded-full shadow-md">
+                    <!-- Placeholder image path updated for GitHub pages -->
+                    <img src="marathon_logo.jpg" alt="شعار الماراثون العلمي الطلابي" class="h-16 w-auto rounded-full shadow-md">
                 </a>
 
-                <!-- Main Title (Visible next to logos on all screens now) -->
-                <h1 class="text-xl md:text-2xl font-extrabold text-gray-900 ml-4">
-                    الماراثون العلمي <span class="text-blue-700">الطلابي</span>
-                </h1>
+                <!-- Main Title (Removed from Navbar as requested) -->
             </div>
 
             <!-- 2. Navigation Links (Center on Desktop, Hidden on Mobile) -->
@@ -209,13 +207,13 @@
             </div>
         </section>
 
-        <!-- Tracks Section (المسارات) - New Card Style -->
+        <!-- Tracks Section (المسارات) - UPDATED TO 3 TRACKS -->
         <section id="tracks" class="py-16 md:py-24 bg-white">
             <div class="container mx-auto px-4">
                 <h3 class="text-4xl font-bold text-center text-gray-900 mb-4">مسارات الماراثون</h3>
                 <p class="text-center text-xl text-gray-600 mb-12 max-w-2xl mx-auto">اختر المسار الذي يتناسب مع اهتماماتك البحثية لتقديم <strong>الملصق أو البحث العلمي</strong>.</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                     
                     <!-- Track 1: Health (الصحي) -->
                     <div class="bg-gray-50 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 border-b-8 border-red-600/70 transform hover:translate-y-[-5px]">
@@ -226,25 +224,16 @@
                         <p class="text-gray-600 text-lg">الأبحاث والملصقات المتعلقة بتحسين الرعاية الصحية، التشخيص، والعلاج باستخدام أحدث المناهج العلمية.</p>
                     </div>
                     
-                    <!-- Track 2: Engineering (الهندسي) -->
-                    <div class="bg-gray-50 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 border-b-8 border-yellow-600/70 transform hover:translate-y-[-5px]">
-                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-yellow-100 text-yellow-600 mb-4 shadow-inner">
-                            <i data-lucide="drafting-compass" class="w-8 h-8"></i>
-                        </div>
-                        <h4 class="text-2xl font-bold text-gray-900 mb-2">المسار الهندسي</h4>
-                        <p class="text-gray-600 text-lg">بحوث ومشاريع نظرية تركز على التصاميم المبتكرة، الأنظمة المستدامة، وحلول البنية التحتية.</p>
-                    </div>
-
-                    <!-- Track 3: Technology (التقني) -->
+                    <!-- Track 2: Engineering & Technology (الهندسي والتقني) -->
                     <div class="bg-gray-50 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 border-b-8 border-blue-600/70 transform hover:translate-y-[-5px]">
                         <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 shadow-inner">
-                            <i data-lucide="laptop-2" class="w-8 h-8"></i>
+                            <i data-lucide="cog" class="w-8 h-8"></i>
                         </div>
-                        <h4 class="text-2xl font-bold text-gray-900 mb-2">المسار التقني</h4>
-                        <p class="text-gray-600 text-lg">أوراق بحثية حول الذكاء الاصطناعي، الأمن السيبراني، وتطوير التقنيات الموجهة علمياً.</p>
+                        <h4 class="text-2xl font-bold text-gray-900 mb-2">المسار الهندسي والتقني</h4>
+                        <p class="text-gray-600 text-lg">بحوث وتصاميم في الذكاء الاصطناعي، الأمن السيبراني، الهندسة، الأنظمة المستدامة، وحلول البنية التحتية.</p>
                     </div>
 
-                    <!-- Track 4: Humanities & Science (الإنساني والعلمي) -->
+                    <!-- Track 3: Humanities & Science (الإنساني والعلمي) -->
                     <div class="bg-gray-50 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 border-b-8 border-green-600/70 transform hover:translate-y-[-5px]">
                         <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4 shadow-inner">
                             <i data-lucide="book-open-text" class="w-8 h-8"></i>
@@ -302,7 +291,7 @@
             </div>
         </section>
 
-        <!-- NEW: Criteria Section (معايير التحكيم) -->
+        <!-- NEW: Criteria Section (معايير التحكيم) - REMOVED PERCENTAGES -->
         <section id="criteria" class="py-16 md:py-24 bg-white">
             <div class="container mx-auto px-4 max-w-4xl">
                 <h3 class="text-4xl font-bold text-center text-gray-900 mb-12">معايير التحكيم</h3>
@@ -350,79 +339,95 @@
             </div>
         </section>
 
-        <!-- NEW: Judges Section (لجنة التحكيم) - UPDATED TO 8 MEMBERS, 4 COLUMNS ON DESKTOP -->
+        <!-- NEW: Judges Section (لجنة التحكيم) - NAMES REMOVED -->
         <section id="judges" class="py-16 md:py-24 bg-gray-100">
             <div class="container mx-auto px-4 max-w-5xl">
                 <h3 class="text-4xl font-bold text-center text-gray-900 mb-12">لجنة التحكيم</h3>
-                <p class="text-center text-xl text-gray-600 mb-8 max-w-2xl mx-auto">تضم لجنة التحكيم نخبة من الأساتذة والمتخصصين من ذوي الخبرة في المجالات العلمية والهندسية والتقنية.</p>
+                <p class="text-center text-xl text-gray-600 mb-8 max-w-2xl mx-auto">تضم اللجنة خبراء متخصصين (3 لكل مسار) لضمان تقييم عادل وعميق للأبحاث.</p>
 
-                <!-- Grid updated from lg:grid-cols-8 to lg:grid-cols-4 to ensure 4 members per row (2 rows total) on large screens -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-6 text-center">
+                <!-- Grid updated to 9 members (cols-3 for desktop) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6 text-center">
                     
-                    <!-- Judge 1 (Tech) -->
+                    <!-- GROUP 1: Health Track Judges (الصحي) -->
+                    <div class="lg:col-span-3 text-2xl font-bold text-blue-700 mt-4 mb-4 border-b pb-2">محكمو المسار الصحي</div>
+                    
+                    <!-- Judge H1 (Health) -->
                     <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
-                        <img src="https://placehold.co/120x120/1d4ed8/ffffff?text=J1" alt="صورة المحكم 1" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-blue-200">
-                        <h4 class="text-lg font-bold text-gray-900">أ.د. محمد العتيبي</h4>
-                        <p class="text-sm text-blue-600">محكم المسار التقني</p>
+                        <img src="https://placehold.co/120x120/34d399/ffffff?text=H1" alt="صورة المحكم 1" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-emerald-200">
+                        <h4 class="text-lg font-bold text-gray-900">د. محكم/ة (1)</h4>
+                        <p class="text-sm text-green-600">محكم/ة متخصصة</p>
+                        <p class="text-xs text-gray-500 mt-1">الرعاية الصحية المبتكرة</p>
+                    </div>
+
+                    <!-- Judge H2 (Health Specialist) -->
+                    <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
+                        <img src="https://placehold.co/120x120/22c55e/ffffff?text=H2" alt="صورة المحكم 2" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-green-200">
+                        <h4 class="text-lg font-bold text-gray-900">د. محكم/ة (2)</h4>
+                        <p class="text-sm text-green-700">محكم/ة باحث/ة</p>
+                        <p class="text-xs text-gray-500 mt-1">طب وعلوم سريرية</p>
+                    </div>
+
+                    <!-- Judge H3 (Health General) -->
+                    <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
+                        <img src="https://placehold.co/120x120/ef4444/ffffff?text=H3" alt="صورة المحكم 3" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-red-200">
+                        <h4 class="text-lg font-bold text-gray-900">أ.د. محكم/ة (3)</h4>
+                        <p class="text-sm text-red-600">محكم/ة إكلينيكية</p>
+                        <p class="text-xs text-gray-500 mt-1">الرعاية الصحية الأولية</p>
+                    </div>
+
+                    <!-- GROUP 2: Engineering & Technology Judges (الهندسي والتقني) -->
+                    <div class="lg:col-span-3 text-2xl font-bold text-blue-700 mt-8 mb-4 border-b pb-2">محكمو المسار الهندسي والتقني</div>
+
+                    <!-- Judge ET1 (Tech) -->
+                    <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
+                        <img src="https://placehold.co/120x120/1d4ed8/ffffff?text=ET1" alt="صورة المحكم 4" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-blue-200">
+                        <h4 class="text-lg font-bold text-gray-900">أ.د. محكم/ة (4)</h4>
+                        <p class="text-sm text-blue-600">محكم/ة تقني</p>
                         <p class="text-xs text-gray-500 mt-1">خبير في الذكاء الاصطناعي</p>
                     </div>
 
-                    <!-- Judge 2 (Health) -->
+                    <!-- Judge ET2 (Engineering) -->
                     <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
-                        <img src="https://placehold.co/120x120/34d399/ffffff?text=J2" alt="صورة المحكم 2" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-emerald-200">
-                        <h4 class="text-lg font-bold text-gray-900">د. سارة الأحمدي</h4>
-                        <p class="text-sm text-green-600">محكمة المسار الصحي</p>
-                        <p class="text-xs text-gray-500 mt-1">متخصصة في الرعاية المبتكرة</p>
+                        <img src="https://placehold.co/120x120/f97316/ffffff?text=ET2" alt="صورة المحكم 5" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-orange-200">
+                        <h4 class="text-lg font-bold text-gray-900">د. محكم/ة (5)</h4>
+                        <p class="text-sm text-orange-600">محكم/ة هندسي</p>
+                        <p class="text-xs text-gray-500 mt-1">مهندس/ة استدامة وبنية</p>
                     </div>
+
+                    <!-- Judge ET3 (Engineering Consultant) -->
+                    <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
+                        <img src="https://placehold.co/120x120/facc15/ffffff?text=ET3" alt="صورة المحكم 6" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-yellow-200">
+                        <h4 class="text-lg font-bold text-gray-900">م. محكم/ة (6)</h4>
+                        <p class="text-sm text-yellow-600">خبير/ة برمجيات</p>
+                        <p class="text-xs text-gray-500 mt-1">م. برمجيات وتقنيات</p>
+                    </div>
+
+                    <!-- GROUP 3: Humanities & Science Judges (الإنساني والعلمي) -->
+                    <div class="lg:col-span-3 text-2xl font-bold text-blue-700 mt-8 mb-4 border-b pb-2">محكمو المسار الإنساني والعلمي</div>
                     
-                    <!-- Judge 3 (Engineering) -->
+                    <!-- Judge HS1 (Humanities) -->
                     <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
-                        <img src="https://placehold.co/120x120/f97316/ffffff?text=J3" alt="صورة المحكم 3" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-orange-200">
-                        <h4 class="text-lg font-bold text-gray-900">د. خالد الزهراني</h4>
-                        <p class="text-sm text-orange-600">محكم المسار الهندسي</p>
-                        <p class="text-xs text-gray-500 mt-1">مهندس استدامة وبنية</p>
+                        <img src="https://placehold.co/120x120/10b981/ffffff?text=HS1" alt="صورة المحكم 7" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-lime-200">
+                        <h4 class="text-lg font-bold text-gray-900">أ. محكم/ة (7)</h4>
+                        <p class="text-sm text-lime-600">محكم/ة إنسانية</p>
+                        <p class="text-xs text-gray-500 mt-1">باحث/ة في العلوم الاجتماعية</p>
                     </div>
 
-                    <!-- Judge 4 (Humanities) -->
+                    <!-- Judge HS2 (General Science) -->
                     <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
-                        <img src="https://placehold.co/120x120/10b981/ffffff?text=J4" alt="صورة المحكم 4" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-lime-200">
-                        <h4 class="text-lg font-bold text-gray-900">أ. نور القحطاني</h4>
-                        <p class="text-sm text-lime-600">محكمة المسار الإنساني</p>
-                        <p class="text-xs text-gray-500 mt-1">باحثة في العلوم الاجتماعية</p>
-                    </div>
-                    
-                    <!-- Judge 5 (General Science) -->
-                    <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
-                        <img src="https://placehold.co/120x120/8b5cf6/ffffff?text=J5" alt="صورة المحكم 5" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-purple-200">
-                        <h4 class="text-lg font-bold text-gray-900">د. فيصل الشهري</h4>
-                        <p class="text-sm text-purple-600">محكم العلوم الأساسية</p>
-                        <p class="text-xs text-gray-500 mt-1">أستاذ الكيمياء التحليلية</p>
+                        <img src="https://placehold.co/120x120/8b5cf6/ffffff?text=HS2" alt="صورة المحكم 8" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-purple-200">
+                        <h4 class="text-lg font-bold text-gray-900">د. محكم/ة (8)</h4>
+                        <p class="text-sm text-purple-600">محكم/ة علوم</p>
+                        <p class="text-xs text-gray-500 mt-1">أستاذ/ة كيمياء تحليلية</p>
                     </div>
 
-                    <!-- Judge 6 (Interdisciplinary) -->
+                    <!-- Judge HS3 (General Science) -->
                     <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
-                        <img src="https://placehold.co/120x120/ef4444/ffffff?text=J6" alt="صورة المحكم 6" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-red-200">
-                        <h4 class="text-lg font-bold text-gray-900">د. منى الرويلي</h4>
-                        <p class="text-sm text-red-600">محكمة متعددة التخصصات</p>
-                        <p class="text-xs text-gray-500 mt-1">متخصصة في البحث العلمي</p>
+                        <img src="https://placehold.co/120x120/3b82f6/ffffff?text=HS3" alt="صورة المحكم 9" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-indigo-200">
+                        <h4 class="text-lg font-bold text-gray-900">د. محكم/ة (9)</h4>
+                        <p class="text-sm text-indigo-600">محكم/ة أكاديمية</p>
+                        <p class="text-xs text-gray-500 mt-1">متخصص/ة في البحث العلمي</p>
                     </div>
-
-                    <!-- Judge 7 (Health Specialist) -->
-                    <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
-                        <img src="https://placehold.co/120x120/22c55e/ffffff?text=J7" alt="صورة المحكم 7" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-green-200">
-                        <h4 class="text-lg font-bold text-gray-900">د. عادل القرني</h4>
-                        <p class="text-sm text-green-700">محكم المسار الصحي</p>
-                        <p class="text-xs text-gray-500 mt-1">طبيب و باحث سريري</p>
-                    </div>
-
-                    <!-- Judge 8 (Engineering Consultant) -->
-                    <div class="bg-white p-4 rounded-xl shadow-lg hover:shadow-xl transition">
-                        <img src="https://placehold.co/120x120/facc15/ffffff?text=J8" alt="صورة المحكم 8" class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-yellow-200">
-                        <h4 class="text-lg font-bold text-gray-900">م. ناصر العجمي</h4>
-                        <p class="text-sm text-yellow-600">محكم المسار التقني</p>
-                        <p class="text-xs text-gray-500 mt-1">مهندس برمجيات وخبير تقني</p>
-                    </div>
-
                 </div>
             </div>
         </section>
@@ -800,32 +805,35 @@
         function toggleAccordion(button) {
             const content = button.nextElementSibling;
             const icon = button.querySelector('.accordion-icon');
-  
-        // إغلاق البقية
-        document.querySelectorAll('.accordion-content').forEach((el) => {
-            if (el !== content) {
-                el.style.maxHeight = null;
-                el.classList.remove('open');
+            
+            // إغلاق البقية
+            document.querySelectorAll('.accordion-header').forEach((header) => {
+                const otherContent = header.nextElementSibling;
+                const otherIcon = header.querySelector('.accordion-icon');
+                if (header !== button) {
+                    header.classList.remove('active');
+                    otherContent.style.maxHeight = null;
+                    if(otherIcon) otherIcon.classList.remove('rotate-180');
+                    otherContent.style.paddingTop = '0';
+                }
+            });
+            
+            // فتح أو إغلاق الحالي
+            button.classList.toggle('active');
+
+            if (content.style.maxHeight) {
+                // إغلاق
+                content.style.maxHeight = null;
+                content.style.paddingTop = '0';
+                if(icon) icon.classList.remove('rotate-180');
+            } 
+            else {
+                // فتح
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.paddingTop = '1rem';
+                if(icon) icon.classList.add('rotate-180');
             }
-        });
-        
-        document.querySelectorAll('.accordion-icon').forEach((ic) => {
-            if (ic !== icon) ic.classList.remove('rotate-180');
-        });
-
-        // فتح أو إغلاق الحالي
-        if (content.style.maxHeight) {
-            content.style.maxHeight = null;
-            content.classList.remove('open');
-            icon.classList.remove('rotate-180');
-        } 
-        else {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.classList.add('open');
-            icon.classList.add('rotate-180');
         }
-    }
-
 
 
         // Initial setup
