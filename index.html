@@ -147,90 +147,52 @@
             transform: scale(1.05);
         }
 
-        /* Off-Canvas Menu Styles */
-        #mobile-menu {
-            position: fixed;
-            top: 0;
-            right: -300px; /* Hidden off-screen initially */
-            width: 300px;
-            height: 100%;
-            background-color: #fff;
-            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
-            transition: right 0.3s ease-in-out;
-            z-index: 60;
+        /* Dropdown Menu Styles for Mobile */
+        #mobile-nav-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background-color: var(--color-primary); /* Dark Blue background */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        #mobile-menu.open {
-            right: 0;
+        #mobile-nav-dropdown.open {
+            max-height: 500px; /* Sufficient height to show all links */
         }
-        #mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 55;
-            display: none;
-        }
-        #mobile-menu-overlay.visible {
+        #mobile-nav-dropdown a {
+            padding: 1rem 1rem;
             display: block;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: 600;
         }
+
     </style>
 </head>
 <body class="scroll-smooth">
-
-    <!-- Off-Canvas Mobile Menu -->
-    <div id="mobile-menu-overlay" class="lg:hidden" onclick="toggleMobileMenu()"></div>
-    <div id="mobile-menu" class="lg:hidden">
-        <div class="flex justify-between items-center p-4 border-b">
-            <h3 class="text-xl font-bold text-blue-700">قائمة التنقل</h3>
-            <button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-red-500 transition">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
-        </div>
-        <nav class="flex flex-col p-4 space-y-2">
-            <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileMenu();" class="text-gray-700 hover:bg-gray-100 p-2 rounded-md">المسارات</a>
-            <a href="#rewards" onclick="internalScroll('rewards'); toggleMobileMenu();" class="text-gray-700 hover:bg-gray-100 p-2 rounded-md">الجوائز</a>
-            <a href="#criteria" onclick="internalScroll('criteria'); toggleMobileMenu();" class="text-gray-700 hover:bg-gray-100 p-2 rounded-md">معايير التحكيم</a>
-            <a href="#judges" onclick="internalScroll('judges'); toggleMobileMenu();" class="text-gray-700 hover:bg-gray-100 p-2 rounded-md">لجنة التحكيم</a>
-            <a href="#schedule" onclick="internalScroll('schedule'); toggleMobileMenu();" class="text-gray-700 hover:bg-gray-100 p-2 rounded-md">البرنامج الزمني</a>
-            <a href="#terms" onclick="internalScroll('terms'); toggleMobileMenu();" class="text-gray-700 hover:bg-gray-100 p-2 rounded-md">الشروط</a>
-            <a href="#partners" onclick="internalScroll('partners'); toggleMobileMenu();" class="text-gray-700 hover:bg-gray-100 p-2 rounded-md">الشركاء</a> 
-            <a href="#faq" onclick="internalScroll('faq'); toggleMobileMenu();" class="text-gray-700 hover:bg-gray-100 p-2 rounded-md">الأسئلة الشائعة</a>
-        </nav>
-        <div class="p-4 pt-6">
-             <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="block text-center px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg">
-                سجل الآن
-            </a>
-        </div>
-    </div>
-    <!-- End Off-Canvas Mobile Menu -->
-
 
     <!-- Header & Navigation (Improved layout and centering) -->
     <header id="main-header" class="bg-white shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center relative">
             
-            <!-- 1. Logos & Title Group (Right Side) -->
+            <!-- 1. Logos & Menu Button Group (Right Side) -->
             <div class="flex items-center space-x-4 space-x-reverse">
                 
-                <!-- Marathon Logo (Event Brand) - Corrected relative path for self-contained file -->
-                <a href="#" class="flex items-center">
-                    <!-- Placeholder image path updated for GitHub pages -->
-                    <img src="marathon_logo.png" alt="شعار الماراثون العلمي الطلابي" class="h-16 w-auto rounded-full shadow-md">
-                </a>
-
-                <!-- Mobile Menu Button (Hamburger) -->
-                <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition absolute left-0 ml-4">
+                <!-- Mobile Menu Button (Hamburger) - Positioned left on mobile -->
+                <button onclick="toggleMobileDropdown()" class="lg:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
+                
+                <!-- Marathon Logo (Event Brand) -->
+                <a href="#" class="flex items-center">
+                    <img src="marathon_logo.png" alt="شعار الماراثون العلمي الطلابي" class="h-16 w-auto rounded-full shadow-md">
+                </a>
             </div>
 
-            <!-- 2. Navigation Links (Center on Desktop, Hidden on Mobile) - Fixed Overlap -->
+            <!-- 2. Navigation Links (Center on Desktop, Hidden on Mobile) -->
             <nav id="landing-nav" class="hidden lg:flex space-x-4 space-x-reverse text-lg font-medium absolute left-1/2 transform -translate-x-1/2">
                 <a href="#tracks" onclick="internalScroll('tracks')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2">المسارات</a>
                 <a href="#rewards" onclick="internalScroll('rewards')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2">الجوائز</a>
-                <a href="#criteria" onclick="internalScroll('criteria')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2">معايير التحكيم</a>
+                <a href="#criteria" onclick="internalScroll('criteria')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2">المعايير</a>
                 <a href="#judges" onclick="internalScroll('judges')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2">لجنة التحكيم</a>
                 <a href="#schedule" onclick="internalScroll('schedule')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2">البرنامج الزمني</a>
                 <a href="#terms" onclick="internalScroll('terms')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2">الشروط</a>
@@ -243,6 +205,21 @@
                 سجل الآن
             </a>
             
+            <!-- Registration Button (Mobile Only, next to logo) -->
+            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="lg:hidden px-3 py-1.5 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg text-sm">
+                سجل الآن
+            </a>
+        </div>
+         <!-- Mobile Dropdown Menu (Underneath the Header) -->
+        <div id="mobile-nav-dropdown" class="lg:hidden w-full">
+            <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileDropdown();">المسارات</a>
+            <a href="#rewards" onclick="internalScroll('rewards'); toggleMobileDropdown();">الجوائز</a>
+            <a href="#criteria" onclick="internalScroll('criteria'); toggleMobileDropdown();">معايير التحكيم</a>
+            <a href="#judges" onclick="internalScroll('judges'); toggleMobileDropdown();">لجنة التحكيم</a>
+            <a href="#schedule" onclick="internalScroll('schedule'); toggleMobileDropdown();">البرنامج الزمني</a>
+            <a href="#terms" onclick="internalScroll('terms'); toggleMobileDropdown();">الشروط والأحكام</a>
+            <a href="#partners" onclick="internalScroll('partners'); toggleMobileDropdown();">الشركاء</a> 
+            <a href="#faq" onclick="internalScroll('faq'); toggleMobileDropdown();">الأسئلة الشائعة</a>
         </div>
     </header>
 
@@ -850,18 +827,16 @@
             }
         }
 
-        // Function to toggle the mobile menu
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const overlay = document.getElementById('mobile-menu-overlay');
-            if (menu.classList.contains('open')) {
-                menu.classList.remove('open');
-                overlay.classList.remove('visible');
-                document.body.style.overflow = ''; // Restore scrolling
+        // Function to toggle the mobile menu dropdown
+        function toggleMobileDropdown() {
+            const dropdown = document.getElementById('mobile-nav-dropdown');
+            if (dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+                dropdown.style.maxHeight = null;
             } else {
-                menu.classList.add('open');
-                overlay.classList.add('visible');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling background
+                dropdown.classList.add('open');
+                // Calculate and set max-height dynamically for smooth transition
+                dropdown.style.maxHeight = dropdown.scrollHeight + 'px';
             }
         }
 
