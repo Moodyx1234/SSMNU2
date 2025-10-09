@@ -23,12 +23,12 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--color-background-light); 
             transition: background-color 0.3s;
+            /* REMOVED: scroll-behavior: smooth; to prevent conflict with JS smooth scroll */
         }
 
         /* Custom utility for smooth scrolling to sections (only for internal links on landing page) */
-        /* NOTE: The 'scroll-behavior: smooth' on body handles general smooth scroll */
         .scroll-smooth {
-            scroll-behavior: smooth;
+            /* Now controlled by JS for accurate scrolling */
         }
 
         /* Accordion base styles: max-height is controlled by JS now */
@@ -185,7 +185,7 @@
                 
                 <!-- Marathon Logo (Event Brand) -->
                 <a href="#" class="flex items-center">
-                    <img src="marathon_logo.png" alt="شعار الماراثون العلمي الطلابي" class="h-16 w-auto rounded-full shadow-md">
+                    <img src="marathon_logo.jpg" alt="شعار الماراثون العلمي الطلابي" class="h-16 w-auto rounded-full shadow-md">
                 </a>
             </div>
 
@@ -231,7 +231,7 @@
     -->
     <div id="landing-view" class="page-view">
         <!-- Hero Section - New Style -->
-        <section class="hero-bg text-white pt-24 pb-16 md:pt-32 md:pb-24">
+        <section id="top" class="hero-bg text-white pt-24 pb-16 md:pt-32 md:pb-24">
             <div class="container mx-auto px-4 text-center relative z-20">
                 <h2 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
                     أطلق فكرتك البحثية في <span class="text-emerald-400">الماراثون العلمي الطلابي</span>
@@ -854,12 +854,12 @@
                 
                 // Use getBoundingClientRect().top for relative position to viewport.
                 // Scroll to the element's position relative to the document top (window.pageYOffset + element.getBoundingClientRect().top)
-                // and subtract the header height (plus a small margin/padding of 20px)
-                const topPosition = window.pageYOffset + element.getBoundingClientRect().top - headerHeight - 20; 
+                // and subtract the header height (plus increased padding of 90px to show content clearly below the navbar)
+                const topPosition = window.pageYOffset + element.getBoundingClientRect().top - headerHeight - 90; 
                 
                 window.scrollTo({
                     top: topPosition,
-                    behavior: 'smooth' // This ensures the dynamic scrolling animation
+                    behavior: 'smooth' // This ensures the dynamic scrolling animation without 'glitching'
                 });
             }
             // Close mobile menu after clicking a link
