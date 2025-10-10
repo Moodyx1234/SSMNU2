@@ -14,7 +14,7 @@
         /* Define a custom color scheme based on professionalism and energy */
         :root {
             --color-primary: #0f172a; /* Slate 900 */
-            --color-secondary: #1d4ed8; /* Blue 700 */
+            --color-secondary: #1d4edd; /* Blue 700 */
             --color-accent: #34d399; /* Emerald 400 */
             --color-background-light: #f8fafc; /* Slate 50 */
             --overlay-color: rgba(15, 23, 42, 0.75); /* Dark overlay for text clarity */
@@ -24,12 +24,6 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--color-background-light); 
             transition: background-color 0.3s;
-            /* REMOVED: scroll-behavior: smooth; to prevent conflict with JS smooth scroll */
-        }
-
-        /* Custom utility for smooth scrolling to sections (only for internal links on landing page) */
-        .scroll-smooth {
-            /* Now controlled by JS for accurate scrolling */
         }
 
         /* Accordion base styles: max-height is controlled by JS now */
@@ -39,7 +33,6 @@
             transition: max-height 0.3s ease-out, padding 0.3s ease-out;
         }
         
-        /* The CSS active state is no longer needed for max-height, as JS handles it, but we keep padding in CSS for clean separation. */
         .accordion-header.active + .accordion-content {
             padding-top: 1rem;
         }
@@ -56,16 +49,6 @@
             transition: opacity 0.4s ease-in-out;
         }
 
-        /* WhatsApp Button styling */
-        .whatsapp-btn {
-            background-color: #25D366; /* WhatsApp green */
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .whatsapp-btn:hover {
-            background-color: #1DA851;
-            transform: scale(1.05);
-        }
-
         /* Countdown styling */
         .countdown-digit {
             background-color: rgba(255, 255, 255, 0.1);
@@ -78,7 +61,6 @@
         .hero-bg {
             background-image: url('NU.jpg');
             background-size: cover;
-            /* EDITED: Position image from the top */
             background-position: center top; 
             background-repeat: no-repeat;
             position: relative;
@@ -94,7 +76,7 @@
             right: 0;
             bottom: 0;
             background-color: var(--overlay-color);
-            z-index: 1; /* Ensure overlay is behind content but above background image */
+            z-index: 1; 
         }
 
         /* Ensure content is above the overlay */
@@ -103,55 +85,35 @@
             z-index: 2; 
         }
         /* END NEW HERO BACKGROUND STYLING */
-
-        /* Timeline styling */
-        .timeline-item {
+        
+        /* --- Schedule Card Styling (Removed Arrows & Fixed Height) --- */
+        .schedule-card {
             position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 20px; /* Reduced vertical gap */
+            display: flex; /* Flex container to ensure internal stretching */
+            flex-direction: column;
+            min-height: 180px; /* Enforce minimum height for card uniformity */
         }
-        .timeline-item::before {
-                content: '';
-                position: absolute;
-                right: -24px; /* Adjust based on padding/margin */
-                top: 0;
-                bottom: 0;
-                width: 2px;
-                background-color: #34d399; /* Accent color */
-        }
-        .timeline-item:last-child::before {
-            height: 50%; /* Stop line halfway for the last item */
-        }
-        .timeline-dot {
-            position: absolute;
-            right: -31px;
-            top: 10px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: #0f172a; /* Primary color */
-            border: 3px solid #34d399; /* Accent color border */
-            z-index: 10;
-        }
+        
+        /* REMOVED ALL ARROW/CONNECTOR CSS FOR DESKTOP AND MOBILE */
 
         /* Custom Grid Ordering for Rewards Section */
-        /* Desktop/iPad: 2nd, 1st, 3rd */
         @media (min-width: 768px) {
             .reward-1st { order: 2; }
             .reward-2nd { order: 1; }
             .reward-3rd { order: 3; }
-            /* Judge layout adjustment for clarity */
             .judge-group-title {
                 text-align: center !important;
                 width: 100%;
             }
         }
-        /* Mobile: 1st, 2nd, 3rd (default column stack order) */
         @media (max-width: 767px) {
             .reward-1st { order: 1; }
             .reward-2nd { order: 2; }
             .reward-3rd { order: 3; }
         }
 
-        /* Podium Height Simulation for Mobile/Tablet */
         .reward-card {
             display: flex;
             flex-direction: column;
@@ -159,7 +121,7 @@
         }
 
         .reward-1st {
-            padding-bottom: 3rem; /* Extra padding to look taller */
+            padding-bottom: 3rem; 
             transform: scale(1.05);
         }
 
@@ -167,12 +129,12 @@
         #mobile-nav-dropdown {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s ease-in-out; /* Adjusted transition for smooth drop-down */
-            background-color: var(--color-primary); /* Dark Blue background */
+            transition: max-height 0.4s ease-in-out; 
+            background-color: var(--color-primary); 
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         #mobile-nav-dropdown.open {
-            max-height: 500px; /* Sufficient height to show all links */
+            max-height: 500px; 
         }
         #mobile-nav-dropdown a {
             padding: 1rem 1rem;
@@ -327,7 +289,7 @@
                     <!-- Reward 1st Place (Gold) - Order 1 on Mobile, Order 2 on Desktop (via CSS) -->
                     <div class="reward-1st reward-card bg-white p-8 rounded-2xl shadow-2xl transition duration-300 border-4 border-yellow-500 relative z-10">
                         <!-- Trophy Icon 1st Place - Larger Size -->
-                        <i data-lucide="trophy" class="w-16 h-16 text-yellow-500 mx-auto mb-4 fill-yellow-500 stroke-2"></i>
+                        <i data-lucide="trophy" class="w-16 h-116 text-yellow-500 mx-auto mb-4 fill-yellow-500 stroke-2"></i>
                         <div>
                             <h4 class="text-3xl font-extrabold text-gray-900 mb-2">المركز الأول</h4>
                             <p class="text-lg text-gray-600 mb-4">جائزة مالية كبرى + درع الماراثون وشهادات اعتماد.</p>
@@ -504,49 +466,120 @@
             </div>
         </section>
 
-        <!-- New Schedule Section (البرنامج الزمني) - Moved Down -->
+        <!-- New Schedule Section (البرنامج الزمني) - CARD-BASED DESIGN without arrows, equal height -->
         <section id="schedule" class="py-16 md:py-24 bg-white">
-            <div class="container mx-auto px-4 max-w-4xl">
+            <div class="container mx-auto px-4 max-w-5xl">
                 <h3 class="text-4xl font-bold text-center text-gray-900 mb-12">البرنامج الزمني للماراثون</h3>
                 
-                <div class="relative max-w-lg mx-auto">
-                    <!-- Timeline Steps -->
-                    <div class="space-y-12 pr-6">
-                        
-                        <!-- Step 1 -->
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <h4 class="text-xl font-bold text-blue-700 mb-1">المرحلة الأولى: التسجيل واستقبال الملخصات</h4>
-                            <p class="text-gray-700">من <strong>20/10/2025</strong> إلى <strong>28/10/2025</strong></p>
-                            <p class="text-sm text-gray-500 mt-1">يجب على الفرق تقديم ملخصات الأفكار والبحوث عبر رابط التسجيل الرسمي.</p>
+                <!-- Row 1: Stages 1, 2, 3, 4 -->
+                <div class="schedule-row-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    
+                    <!-- Item 1: فتح التسجيل (Start of Process) - UPDATED CONTENT -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-emerald-400">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="calendar-check" class="w-6 h-6 text-emerald-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة الأولى</h4>
                         </div>
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">فتح التسجيل</h5>
+                        <p class="text-gray-700 text-sm"><strong>1 نوفمبر 2025</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">إتاحة رابط التسجيل للفرق وبدء استقبال الملخصات البحثية.</p>
+                    </div>
+                    
+                    <!-- Item 2: بداية الورش (Activity) -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-blue-500">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="activity" class="w-6 h-6 text-blue-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة الثانية</h4>
+                        </div>
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">الورش التعريفية والدعم</h5>
+                        <p class="text-gray-700 text-sm">من <strong>1 نوفمبر</strong> إلى <strong>31 ديسمبر 2025</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">بداية الورش التدريبية والإشراف على الفرق أثناء إعداد الملخصات.</p>
+                    </div>
 
-                        <!-- Step 2 -->
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <h4 class="text-xl font-bold text-blue-700 mb-1">المرحلة الثانية: إعلان الفرق المتأهلة وورش العمل</h4>
-                            <p class="text-gray-700"><strong>2/11/2025</strong></p>
-                            <p class="text-sm text-gray-500 mt-1">إعلان نتائج تقييم الملخصات وبدء الورش التدريبية والإشراف على الفرق المتأهلة.</p>
+                    <!-- Item 3: إغلاق التسجيل (New Stage) -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-red-500">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="calendar-x" class="w-6 h-6 text-red-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة الثالثة</h4>
                         </div>
-                        
-                        <!-- Step 3 -->
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <h4 class="text-xl font-bold text-blue-700 mb-1">المرحلة الثالثة: تقديم الأبحاث/الملصقات النهائية</h4>
-                            <p class="text-gray-700"><strong>23/11/2025</strong></p>
-                            <p class="text-sm text-gray-500 mt-1">الموعد النهائي لتقديم النسخ الكاملة للبحوث والملصقات العلمية المكتملة.</p>
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">إغلاق التسجيل</h5>
+                        <p class="text-gray-700 text-sm"><strong>31 ديسمبر 2025</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">إغلاق رابط التسجيل والتوقف عن استقبال الملخصات البحثية.</p>
+                    </div>
+                    
+                    <!-- Item 4: فرز النتائج الأولية (Screening) - Shifted one stage down -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-yellow-500">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="scan" class="w-6 h-6 text-yellow-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة الرابعة</h4>
                         </div>
-                        
-                        <!-- Step 4 -->
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <h4 class="text-xl font-bold text-blue-700 mb-1">المرحلة الرابعة: التقييم النهائي وإعلان الفائزين</h4>
-                            <p class="text-gray-700"><strong>30/11/2025</strong></p>
-                            <p class="text-sm text-gray-500 mt-1">عرض المشاريع وتقييمها وإعلان الفرق الفائزة وتوزيع الجوائز.</p>
-                        </div>
-
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">فرز النتائج الأولية</h5>
+                        <p class="text-gray-700 text-sm">من <strong>30 ديسمبر 2025</strong> إلى <strong>10 يناير 2026</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">تقييم الأبحاث لتحديد الفرق المؤهلة للنهائيات.</p>
                     </div>
                 </div>
+
+                 <!-- Row 2: Stages 5, 6, 7, 8 -->
+                <div class="schedule-row-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                     <!-- Item 5: إرسال القبول الرسمي (Notification) - Shifted one stage down -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-indigo-500">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="mail-check" class="w-6 h-6 text-indigo-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة الخامسة</h4>
+                        </div>
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">إرسال القبول الرسمي</h5>
+                        <p class="text-gray-700 text-sm"><strong>11 يناير 2026</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">إرسال إشعارات القبول الرسمية للفرق المؤهلة.</p>
+                    </div>
+
+                    <!-- Item 6: تدشين الحدث (Competition/Trophy) - Shifted one stage down -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-red-500">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="trophy" class="w-6 h-6 text-red-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة السادسة</h4>
+                        </div>
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">تدشين الحدث (البنين)</h5>
+                        <p class="text-gray-700 text-sm"><strong>25 يناير 2026</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">اليوم الأول للحدث الحضوري وتدشين الفعاليات (خاص بالبنين).</p>
+                    </div>
+                    
+                    <!-- Item 7: فعاليات اليوم الثاني (Competition/Trophy) - Shifted one stage down -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-red-500">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="trophy" class="w-6 h-6 text-red-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة السابعة</h4>
+                        </div>
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">فعاليات اليوم الثاني (البنات)</h5>
+                        <p class="text-gray-700 text-sm"><strong>26 يناير 2026</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">اليوم الثاني للحدث الحضوري وفعاليات الماراثون (خاص بالبنات).</p>
+                    </div>
+                    
+                    <!-- Item 8: التحكيم النهائي (Competition/Trophy) - Shifted one stage down -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-red-500">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="trophy" class="w-6 h-6 text-red-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة الثامنة</h4>
+                        </div>
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">التحكيم النهائي</h5>
+                        <p class="text-gray-700 text-sm"><strong>27 يناير 2026</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">إجراء التحكيم النهائي لجميع الفرق المؤهلة.</p>
+                    </div>
+                </div>
+
+                <!-- Row 3: Stage 9 -->
+                <div class="schedule-row-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Item 9: الحفل الختامي (Party/End) - Shifted one stage down -->
+                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-emerald-400">
+                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                            <i data-lucide="party-popper" class="w-6 h-6 text-emerald-600 flex-shrink-0"></i>
+                            <h4 class="text-xl font-bold text-gray-900">المرحلة التاسعة</h4>
+                        </div>
+                        <h5 class="text-lg font-bold text-blue-700 mb-2">الحفل الختامي</h5>
+                        <p class="text-gray-700 text-sm"><strong>29 يناير 2026</strong></p>
+                        <p class="text-xs text-gray-500 mt-2">الحفل الختامي للماراثون وإعلان النتائج النهائية وتوزيع الجوائز.</p>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -813,7 +846,7 @@
 
                 <!-- Unified Button: Contact, Announcements, Team Formation -->
                 <a 
-                    href="https://t.me/+tI7Sr5HwmP5kN2Y0"
+                    href="https://t.me/+zBdxsQTGhn8zY2Q0"
                     target="_blank"
                     class="inline-flex items-center space-x-2 space-x-reverse px-10 py-4 bg-emerald-400 text-gray-900 text-xl font-bold rounded-full shadow-lg hover:bg-emerald-500 transition duration-300"
                 >
@@ -849,8 +882,8 @@
 
 
     <script>
-        // Set the target date for the countdown (28 October 2025 at 00:00:00)
-        const targetDate = new Date("2025-10-28T00:00:00").getTime();
+        // Set the target date for the countdown (New date: 1 November 2025 at 00:00:00)
+        const targetDate = new Date("2025-11-01T00:00:00").getTime();
         
         // Function to update the countdown
         function updateCountdown() {
@@ -918,6 +951,7 @@
                 // Scroll to the element's position relative to the document top (window.pageYOffset + element.getBoundingClientRect().top)
                 // and subtract the header height (plus temporary padding of 20px)
                 // This ensures the element's top is visible below the header.
+                // Reverting to -20 offset as requested for better visual positioning
                 const topPosition = window.pageYOffset + element.getBoundingClientRect().top - headerHeight - 20; 
                 
                 window.scrollTo({
