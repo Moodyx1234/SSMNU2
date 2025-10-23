@@ -33,12 +33,23 @@
             
             /* الزينة النقطية التي طلبتها (بدون تأثير على المحتوى) */
             background-image: 
-                linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.1) 10px, transparent 11px), 
-                linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.1) 10px, transparent 11px);
+                /* Mobile opacity reduced to 0.03 for a very subtle grid */
+                linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px), 
+                linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px);
             background-size: 50px 50px; 
             /* تم حذف خاصية الثبات (fixed) لجعل الخلفية تتحرك مع التمرير */
             /* background-attachment: fixed; */
         }
+
+        /* Desktop opacity adjustment for the grid pattern */
+        @media (min-width: 1024px) {
+            body {
+                background-image: 
+                    linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.1) 10px, transparent 11px), 
+                    linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.1) 10px, transparent 11px);
+            }
+        }
+
 
         /* 🧬 Canvas خلفية الذرات المترابطة - تحرير من الثبات (Absolute) ليتغطى كامل الصفحة */
         #atom-bg {
@@ -189,7 +200,8 @@
         }
         /* --- Logo Size Fix (Increased Marathon Logo) --- */
         #main-header .marathon-logo {
-            height: 90px; /* INCREASED FROM 80px */
+            /* Changed height from 90px to 64px and removed rounded-full */
+            height: 64px; 
             width: auto;
         }
         /* --- Partners Logo Flexibility FIX --- */
@@ -244,9 +256,9 @@
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
                 
-                <!-- Marathon Logo (Event Brand) - UPDATED IMAGE SOURCE AND SIZE -->
+                <!-- Marathon Logo (Event Brand) - UPDATED IMAGE SOURCE, REMOVED rounded-full -->
                 <a href="#" class="flex items-center">
-                    <img src="شعار الماراثون.png" alt="شعار الماراثون العلمي الطلابي" class="marathon-logo w-auto rounded-full shadow-md">
+                    <img src="شعار الماراثون.png" alt="شعار الماراثون العلمي الطلابي" class="marathon-logo w-auto shadow-md">
                 </a>
             </div>
 
@@ -856,7 +868,7 @@
                 
                 <!-- 3. Other Sponsors (شركاء النجاح) - RENAMED SECTION AND REMOVED PLACEHOLDERS -->
                 <div>
-                    <h4 class="text-2xl font-bold text-blue-700 mb-8">الرعاة</h4>
+                    <h4 class="text-2xl font-bold text-blue-700 mb-8">شركاء النجاح</h4>
                     <div class="flex flex-wrap justify-center items-center gap-10">
                         <!-- Partner 1: The District (Horizontal Aspect) -->
                         <div class="partner-logo-container p-4 bg-white rounded-xl shadow-md max-w-xs flex items-center justify-center hover:shadow-lg transition">
@@ -1156,19 +1168,44 @@
             const ctx = canvas.getContext("2d");
 
             let particles = [];
-            // INCREASED DENSITY
-            const numParticles = 150; 
+            // DEFAULT DENSITY
+            let numParticles = 150; 
+            // DEFAULT MOVEMENT SPEED
+            let speedFactor = 0.7; 
+            
             // INCREASED CONNECTION RANGE
-            const maxDistance = 250; // Increased connection range
+            const maxDistance = 250; 
             // INCREASED PARTICLE SIZE AND SPEED
-            const maxRadius = 4; // Increased maximum radius
+            const maxRadius = 4; 
+
+            // Check if mobile (screen width < 1024px)
+            if (window.innerWidth < 1024) {
+                numParticles = 100; // Less dense on mobile
+                speedFactor = 1.2; // Faster movement on mobile
+            }
 
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
                 canvas.height = document.body.scrollHeight; 
             }
 
-            window.addEventListener("resize", resizeCanvas);
+            window.addEventListener("resize", () => {
+                resizeCanvas();
+                // Re-initialize particles on resize to apply correct density/speed
+                particles = [];
+                numParticles = window.innerWidth < 1024 ? 100 : 150;
+                speedFactor = window.innerWidth < 1024 ? 1.2 : 0.7;
+                for (let i = 0; i < numParticles; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        r: Math.random() * (maxRadius - 1) + 1,
+                        dx: (Math.random() - 0.5) * speedFactor, 
+                        dy: (Math.random() - 0.5) * speedFactor, 
+                        color: ["#1d4edd", "#34d399", "#7c3aed"][Math.floor(Math.random() * 3)]
+                    });
+                }
+            });
             resizeCanvas();
 
             // إنشاء الذرات
@@ -1177,8 +1214,8 @@
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     r: Math.random() * (maxRadius - 1) + 1, // Use new maxRadius
-                    dx: (Math.random() - 0.5) * 0.7, // Slightly faster movement
-                    dy: (Math.random() - 0.5) * 0.7, 
+                    dx: (Math.random() - 0.5) * speedFactor, // Apply initial speed factor
+                    dy: (Math.random() - 0.5) * speedFactor, 
                     color: ["#1d4edd", "#34d399", "#7c3aed"][Math.floor(Math.random() * 3)] // ألوان الشعار
                 });
             }
