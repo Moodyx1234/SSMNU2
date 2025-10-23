@@ -33,9 +33,9 @@
             
             /* الزينة النقطية التي طلبتها (بدون تأثير على المحتوى) */
             background-image: 
-                /* Mobile opacity reduced to 0.03 for a very subtle grid */
-                linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px), 
-                linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px);
+                /* GLOBAL OPACITY REDUCED FOR SUBTLETY (rgba(15, 23, 42, 0.05)) */
+                linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.05) 10px, transparent 11px), 
+                linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.05) 10px, transparent 11px);
             background-size: 50px 50px; 
             /* تم حذف خاصية الثبات (fixed) لجعل الخلفية تتحرك مع التمرير */
             /* background-attachment: fixed; */
@@ -44,9 +44,10 @@
         /* Desktop opacity adjustment for the grid pattern - (Used for larger devices, including high-res tablets) */
         @media (min-width: 1024px) {
             body {
+                /* Reduced opacity slightly for better blending on desktop too */
                 background-image: 
-                    linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.1) 10px, transparent 11px), 
-                    linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.1) 10px, transparent 11px);
+                    linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.08) 10px, transparent 11px), 
+                    linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.08) 10px, transparent 11px);
             }
         }
 
@@ -252,7 +253,7 @@
             <div class="flex items-center space-x-4 space-x-reverse">
                 
                 <!-- Mobile Menu Button (Hamburger) - Positioned left on mobile -->
-                <button onclick="toggleMobileDropdown()" class="lg:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition">
+                <button onclick="toggleMobileDropdown()" class="xl:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
                 
@@ -263,7 +264,7 @@
             </div>
 
             <!-- 2. Navigation Links (Center on Desktop, Hidden on Mobile) - IMPROVED SPACING FOR SINGLE ROW -->
-            <nav id="landing-nav" class="hidden lg:flex space-x-3 space-x-reverse lg:space-x-4 text-base font-medium absolute left-1/2 transform -translate-x-1/2">
+            <nav id="landing-nav" class="hidden xl:flex space-x-3 space-x-reverse lg:space-x-4 text-base font-medium absolute left-1/2 transform -translate-x-1/2">
                 <a href="#tracks" onclick="internalScroll('tracks')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap">المسارات</a>
                 <a href="#rewards" onclick="internalScroll('rewards')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap">الجوائز</a>
                 <a href="#criteria" onclick="internalScroll('criteria')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap">المعايير</a>
@@ -277,17 +278,17 @@
             </nav>
             
             <!-- 3. Registration Button (Left Side - Desktop Only) -->
-            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="hidden lg:block px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg shadow-blue-500/50 text-sm md:text-base">
+            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="hidden xl:block px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg shadow-blue-500/50 text-sm md:text-base">
                 سجل الآن
             </a>
             
             <!-- Registration Button (Mobile Only, next to logo) -->
-            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="lg:hidden px-3 py-1.5 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg text-sm">
+            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="xl:hidden px-3 py-1.5 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg text-sm">
                 سجل الآن
             </a>
         </div>
          <!-- Mobile Dropdown Menu (Underneath the Header) -->
-        <div id="mobile-nav-dropdown" class="lg:hidden w-full">
+        <div id="mobile-nav-dropdown" class="xl:hidden w-full">
             <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileDropdown();">المسارات</a>
             <a href="#rewards" onclick="internalScroll('rewards'); toggleMobileDropdown();">الجوائز</a>
             <a href="#criteria" onclick="internalScroll('criteria'); toggleMobileDropdown();">معايير التحكيم</a>
@@ -1079,6 +1080,10 @@
         // Function to toggle the mobile menu dropdown
         function toggleMobileDropdown() {
             const dropdown = document.getElementById('mobile-nav-dropdown');
+            // FIX: Use XL breakpoint for desktop view, so LG (Tablet) uses dropdown
+            const isDesktop = window.innerWidth >= 1280; 
+            if (isDesktop) return; // Prevent dropdown on desktop
+
             if (dropdown.classList.contains('open')) {
                 dropdown.classList.remove('open');
                 dropdown.style.maxHeight = null;
@@ -1178,7 +1183,7 @@
             // INCREASED PARTICLE SIZE AND SPEED
             const maxRadius = 4; 
 
-            // Check if mobile (screen width < 1024px)
+            // Initial setting based on screen size
             if (window.innerWidth < 1024) {
                 numParticles = 100; // Less dense on mobile
                 speedFactor = 1.2; // Faster movement on mobile
