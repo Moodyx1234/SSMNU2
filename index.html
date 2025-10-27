@@ -46,6 +46,7 @@
                 linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.02) 10px, transparent 11px), 
                 linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.02) 10px, transparent 11px);
             background-size: 50px 50px; 
+            /* تم إزالة background-attachment: fixed; */
         }
 
         /* Dark mode background pattern */
@@ -75,24 +76,18 @@
         }
 
 
-        /* 🧬 Canvas خلفية الذرات المترابطة */
-        /* Default position for mobile/iPad (fixed to viewport for smooth floating and less jitter) */
+        /* 🧬 Canvas خلفية الذرات المترابطة 
+           تم تعديلها لتكون absolute في جميع النسخ لتتحرك مع التمرير.
+        */
         #atom-bg {
-            position: fixed; /* Fixed for mobile/iPad */
+            position: absolute; 
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
-            z-index: -10; /* أعمق طبقة */
+            /* Height is managed by JS to cover content length */
+            height: 100%; 
+            z-index: -10; 
             background: transparent;
-        }
-
-        /* Override to absolute positioning (relative to document body) only for Desktop/XL Screens */
-        @media (min-width: 1280px) {
-            #atom-bg {
-                position: absolute; 
-                height: auto; /* Managed by JS to cover content length */
-            }
         }
 
 
@@ -297,6 +292,12 @@
             
             <!-- 1. Logos & Menu Button Group (Right Side) -->
             <div class="flex items-center space-x-4 space-x-reverse">
+                
+                <!-- Mobile Menu Button (Hamburger) - Positioned left on mobile -->
+                <!-- DARK MODE: dark:text-gray-300 dark:hover:bg-gray-700 -->
+                <button onclick="toggleMobileDropdown()" class="xl:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition dark:text-gray-300 dark:hover:bg-gray-700">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
                 
                 <!-- Marathon Logo (Event Brand) -->
                 <a href="#" class="flex items-center">
@@ -1256,14 +1257,12 @@
                 createDigitBox(seconds, 'ثانية');
         }
 
-        // REMOVED: updateGlobalVisitCounter function
-
-        // Function to toggle the mobile menu dropdown
+        // Function to toggle the mobile menu dropdown (Side Drawer Logic)
         function toggleMobileDropdown() {
             const dropdown = document.getElementById('mobile-nav-dropdown');
             const overlay = document.getElementById('mobile-nav-overlay'); // Added overlay
             // Prevent dropdown on large screens (desktop)
-            const isDesktop = window.innerWidth >= 1280; 
+            const isDesktop = window.innerWidth >= 1280; // xl breakpoint
             if (isDesktop) return; 
 
             if (dropdown.classList.contains('open')) {
@@ -1291,13 +1290,11 @@
                 // Use getBoundingClientRect().top for relative position to viewport.
                 // Scroll to the element's position relative to the document top (window.pageYOffset + element.getBoundingClientRect().top)
                 // and subtract the header height (plus temporary padding of 20px)
-                // This ensures the element's top is visible below the header.
-                // Reverting to -20 offset as requested for better visual positioning
                 const topPosition = window.pageYOffset + element.getBoundingClientRect().top - headerHeight - 20; 
                 
                 window.scrollTo({
                     top: topPosition,
-                    behavior: 'smooth' // This ensures the dynamic scrolling animation without 'glitching'
+                    behavior: 'smooth' 
                 });
             }
             // Close mobile menu after clicking a link
@@ -1309,7 +1306,7 @@
             }
         }
         
-        // Function to handle accordion toggling - FIX APPLIED HERE
+        // Function to handle accordion toggling
         function toggleAccordion(button) {
             const content = button.nextElementSibling;
             const icon = button.querySelector('.accordion-icon');
@@ -1322,7 +1319,6 @@
                     header.classList.remove('active');
                     otherContent.style.maxHeight = null;
                     if(otherIcon) otherIcon.classList.remove('rotate-180');
-                    // Removed paddingTop reset as the padding is now controlled by the <p> class pb-4
                 }
             });
             
@@ -1332,18 +1328,16 @@
             if (content.style.maxHeight) {
                 // إغلاق
                 content.style.maxHeight = null;
-                // Removed paddingTop set as the padding is now controlled by the <p> class pb-4
                 if(icon) icon.classList.remove('rotate-180');
             } 
             else {
                 // فتح
                 content.style.maxHeight = content.scrollHeight + 'px';
-                // Removed paddingTop set as the padding is now controlled by the <p> class pb-4
                 if(icon) icon.classList.add('rotate-180');
             }
         }
 
-        // --- NEW: Dark Mode Logic ---
+        // --- Dark Mode Logic ---
         
         /**
          * Applies the saved theme from localStorage or system preference.
@@ -1358,7 +1352,6 @@
                 document.documentElement.classList.remove('dark');
             }
             // Re-create icons to reflect the theme change (sun/moon)
-            // Call this AFTER adding/removing the 'dark' class
             lucide.createIcons();
         }
 
@@ -1374,7 +1367,6 @@
                 localStorage.setItem('theme', 'dark');
             }
             // Re-create icons to reflect the theme change (sun/moon)
-            // Call this AFTER adding/removing the 'dark' class
             lucide.createIcons();
         }
 
@@ -1383,7 +1375,7 @@
 
         // Initial setup
         document.addEventListener('DOMContentLoaded', () => {
-            // NEW: Initialize theme first
+            // Initialize theme first
             initializeTheme();
             
             // Run the countdown immediately and then every second
@@ -1406,17 +1398,7 @@
 
             // Function to update settings based on screen size (using original logic)
             function updateParticleSettings() {
-                // Original logic from the user's initial code snippet
-                if (window.innerWidth < 1024) {
-                    numParticles = 100; // Less dense on mobile
-                    speedFactor = 1.2; // Faster movement on mobile
-                } else {
-                     numParticles = 150; 
-                     speedFactor = 0.7; 
-                }
-                
-                // ADJUSTED: Re-applying the slightly adjusted values from the previous successful run for better mobile/iPad balance 
-                // BUT sticking close to the user's latest provided values:
+                // ADJUSTED values from the previous successful run (Keeping these as they were stable)
                 if (window.innerWidth < 768) {
                     numParticles = 60; // Optimized for performance on small screen
                     speedFactor = 1.2; 
@@ -1431,14 +1413,8 @@
 
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
-                // For desktop (>= 1280px), the height should cover the full content
-                if (window.innerWidth >= 1280) {
-                   canvas.height = Math.max(document.body.scrollHeight, window.innerHeight); 
-                } 
-                // For mobile/iPad (< 1280px), the height should cover only the viewport (due to fixed positioning)
-                else {
-                   canvas.height = window.innerHeight;
-                }
+                // Height is always based on scrollHeight now because position is absolute
+                canvas.height = Math.max(document.body.scrollHeight, window.innerHeight); 
             }
 
             // Debounce function to limit resize handler calls
@@ -1457,9 +1433,10 @@
             const debouncedResizeHandler = debounce(() => {
                 resizeCanvas();
                 // Re-initialize particles on resize to apply correct density/speed
-                updateParticleSettings();
-                particles = [];
+                updateParticleSettings(); // Update settings based on new size
+                particles = []; // Clear existing particles
                 
+                // Create new particles with updated settings
                 for (let i = 0; i < numParticles; i++) {
                     particles.push({
                         x: Math.random() * canvas.width,
@@ -1476,6 +1453,7 @@
             updateParticleSettings();
             resizeCanvas(); 
 
+            // Create initial particles
             for (let i = 0; i < numParticles; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
@@ -1486,7 +1464,6 @@
                     color: ["#1d4edd", "#34d399", "#7c3aed"][Math.floor(Math.random() * 3)] // ألوان الشعار
                 });
             }
-
 
             window.addEventListener("resize", debouncedResizeHandler);
             
@@ -1504,10 +1481,10 @@
             let animationFrameId = null; // To control the animation loop
 
             function draw() {
-                // 1. Re-check canvas size dynamically ONLY FOR DESKTOP (where position is absolute)
-                if (window.innerWidth >= 1280) {
+                // Re-check canvas size dynamically for absolute positioning
+                 if (canvas.height !== Math.max(document.body.scrollHeight, window.innerHeight)) {
                     resizeCanvas(); 
-                }
+                 }
                 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1515,7 +1492,7 @@
                 for (let p of particles) {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    // INCREASED OPACITY for particle fill (from 55 to 99)
+                    // Increased opacity for particle fill
                     ctx.fillStyle = p.color + "99"; 
                     ctx.fill();
                 }
@@ -1534,9 +1511,9 @@
                             ctx.beginPath();
                             ctx.moveTo(a.x, a.y);
                             ctx.lineTo(b.x, b.y);
-                            // INCREASED LINE OPACITY for contrast (from 100 to 200)
+                            // Increased line opacity for contrast
                             ctx.strokeStyle = a.color + Math.floor(opacity * 200).toString(16).padStart(2, '0');
-                            ctx.lineWidth = 1; // Thicker lines
+                            ctx.lineWidth = 1; 
                             ctx.stroke();
                         }
                     }
