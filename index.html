@@ -41,22 +41,19 @@
             /* FIX: Hide horizontal overflow to remove extra space on the left */
             overflow-x: hidden; 
             
-            /* الزينة النقطية التي طلبتها (بدون تأثير على المحتوى) */
+            /* الزينة النقطية (تم تقليل الشفافية إلى 0.02) */
             background-image: 
-                /* GLOBAL OPACITY REDUCED FOR SUBTLETY (rgba(15, 23, 42, 0.05)) */
-                linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px), 
-                linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px);
+                linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.02) 10px, transparent 11px), 
+                linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.02) 10px, transparent 11px);
             background-size: 50px 50px; 
-            /* تم حذف خاصية الثبات (fixed) لجعل الخلفية تتحرك مع التمرير */
-            /* background-attachment: fixed; */
         }
 
-        /* NEW: Dark mode background pattern */
+        /* Dark mode background pattern */
         html.dark body {
             background-color: #0f172a; /* Slate 900 */
             background-image: 
-                linear-gradient(0deg, transparent 9px, rgba(255, 255, 255, 0.03) 10px, transparent 11px), 
-                linear-gradient(90deg, transparent 9px, rgba(255, 255, 255, 0.03) 10px, transparent 11px);
+                linear-gradient(0deg, transparent 9px, rgba(255, 255, 255, 0.02) 10px, transparent 11px), 
+                linear-gradient(90deg, transparent 9px, rgba(255, 255, 255, 0.02) 10px, transparent 11px);
         }
 
 
@@ -78,7 +75,7 @@
         }
 
 
-        /* 🧬 Canvas خلفية الذرات المترابطة - تحرير من الثبات (Absolute) ليتغطى كامل الصفحة */
+        /* 🧬 Canvas خلفية الذرات المترابطة */
         #atom-bg {
             position: absolute; /* Changed from fixed */
             inset: 0;
@@ -99,7 +96,7 @@
             z-index: 1; 
         }
         
-        /* Accordion base styles: max-height is controlled by JS now */
+        /* Accordion base styles */
         .accordion-content {
             max-height: 0;
             overflow: hidden;
@@ -119,12 +116,19 @@
 
         /* Countdown styling */
         .countdown-digit {
-            background-color: rgba(255, 255, 255, 0.1);
+            /* REDUCED OPACITY: Changed 0.1 to 0.05 for subtlety */
+            background-color: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
+        
+        /* Schedule Card Styling - Reduced opacity for subtle effect in dark mode */
+        html.dark .schedule-card {
+            /* Reduced dark card background opacity */
+            background-color: rgba(30, 41, 59, 0.8); /* slate-800 equivalent with opacity */
+        }
+        
         /* NEW HERO BACKGROUND STYLING WITH IMAGE AND OVERLAY */
         .hero-bg {
             background-image: url('NU.jpg');
@@ -170,17 +174,7 @@
         }
         /* END NEW HERO BACKGROUND STYLING */
         
-        /* --- Schedule Card Styling (Removed Arrows & Fixed Height) --- */
-        .schedule-card {
-            position: relative;
-            transition: transform 0.3s, box-shadow 0.3s;
-            margin-bottom: 20px; /* Reduced vertical gap */
-            display: flex; /* Flex container to ensure internal stretching */
-            flex-direction: column;
-            min-height: 180px; /* Enforce minimum height for card uniformity */
-        }
-        
-        /* Custom Grid Ordering for Rewards Section */
+        /* --- Custom Grid Ordering for Rewards Section --- */
         @media (min-width: 768px) {
             .reward-1st { order: 2; }
             .reward-2nd { order: 1; }
@@ -196,82 +190,77 @@
             .reward-3rd { order: 3; }
         }
 
-        .reward-card {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .reward-1st {
-            padding-bottom: 3rem; 
-            transform: scale(1.05);
-        }
-
-        /* Dropdown Menu Styles for Mobile - ADDED TRANSITION */
+        /* ---------------------------------------------------- */
+        /* NEW: Dropdown Menu Styles for Mobile (Side Drawer)  */
+        /* ---------------------------------------------------- */
         #mobile-nav-dropdown {
-            /* NEW: Absolute positioning to overlay content */
-            position: absolute; 
-            top: 100%; /* Position right below the header */
-            left: 0;
-            width: 100%; /* Full width */
-            z-index: 45; /* Below sticky header, above content */
+            /* Position it fixed to the top right of the viewport */
+            position: fixed; 
+            top: 0;
+            right: 0;
+            width: 75%; /* 3/4 width on small screens */
+            max-width: 320px; /* Max width to prevent it being too wide on tablet/desktop */
+            height: 100%; /* Full height of the viewport */
+            z-index: 55; /* Higher than sticky header */
             
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-in-out; 
-            background-color: var(--color-primary); 
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: var(--color-primary); /* Dark Blue/Slate */
+            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.3); /* Shadow on the left edge */
+            overflow-y: auto; /* Scrollable content */
+            
+            /* Initial State: Slide out to the right */
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out; 
+            
+            /* Only visible on non-desktop/large tablet screens */
+            display: none; /* Hidden by default */
         }
+        
+        @media (max-width: 1279px) { /* Show only up to xl breakpoint */
+            #mobile-nav-dropdown {
+                display: block;
+            }
+        }
+
         #mobile-nav-dropdown.open {
-            /* Adjusted max-height to fit the new button */
-            max-height: 550px; 
+            /* Open State: Slide in */
+            transform: translateX(0); 
         }
+        
         #mobile-nav-dropdown a {
-            padding: 1rem 1rem;
-            display: block;
+            padding: 1rem 1.5rem; /* Increased horizontal padding */
+            display: flex; /* Use flex for the link itself */
+            justify-content: space-between; /* To push icon to the right (in RTL) */
+            align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             color: #fff;
             font-weight: 600;
+            transition: background-color 0.15s;
         }
-        /* --- Logo Size Fix (Increased Marathon Logo) --- */
-        #main-header .marathon-logo {
-            /* Changed height from 90px to 64px and removed rounded-full */
-            height: 64px; 
-            width: auto;
-        }
-        /* --- Partners Logo Flexibility FIX --- */
-        .partner-logo-container {
-            min-height: 100px;
-            max-height: 140px; 
-            /* Ensure logo fits container */
-            width: auto; /* Allow container width to adjust to content */
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .partner-logo-container img {
-             /* Set maximum dimensions relative to the container */
-              max-height: 120px; /* INCREASED FROM 100px */
-              max-width: 100%; /* Max horizontal size */
-              object-fit: contain; /* Important: Ensures the logo is fully visible and respects aspect ratio */
-              height: auto;
-              width: auto;
-        }
-        /* Specific Fix for Wide Logos like SAIP to ensure they take enough width */
-        .partner-logo-container.wide {
-            max-width: 20rem; /* Allow wider container for horizontal logos */
-        }
-        /* New badge style for Total Rewards - IMPROVED COLOR */
-        .total-rewards-badge {
-            background: linear-gradient(90deg, #34d399, #10b981); /* Green Gradient for visibility */
-            padding: 0.75rem 2rem;
-            border-radius: 9999px; /* rounded-full */
-            box-shadow: 0 10px 15px -3px rgba(52, 211, 153, 0.5), 0 4px 6px -2px rgba(52, 211, 153, 0.2);
-            display: inline-block;
-            margin-bottom: 2rem;
+
+        #mobile-nav-dropdown a:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
         }
         
+        /* NEW: Overlay for the side menu */
+        #mobile-nav-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark semi-transparent overlay */
+            z-index: 50; /* Below the menu (55) but above the header (50) and content (10) */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s;
+        }
+
+        #mobile-nav-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* ---------------------------------------------------- */
+        /* END NEW: Dropdown Menu Styles                      */
+        /* ---------------------------------------------------- */
+
+
         /* UPDATED: Dark mode toggle button icon styles (Generic) */
         /* Default: show moon, hide sun */
         .moon-icon { display: block; }
@@ -296,19 +285,13 @@
             <!-- 1. Logos & Menu Button Group (Right Side) -->
             <div class="flex items-center space-x-4 space-x-reverse">
                 
-                <!-- Mobile Menu Button (Hamburger) - Positioned left on mobile -->
-                <!-- DARK MODE: dark:text-gray-300 dark:hover:bg-gray-700 -->
-                <button onclick="toggleMobileDropdown()" class="xl:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition dark:text-gray-300 dark:hover:bg-gray-700">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-                
-                <!-- Marathon Logo (Event Brand) - UPDATED IMAGE SOURCE, REMOVED rounded-full -->
+                <!-- Marathon Logo (Event Brand) -->
                 <a href="#" class="flex items-center">
-                    <img src="شعار الماراثون.png" alt="شعار الماراثون العلمي الطلابي" class="marathon-logo w-auto shadow-md">
+                    <img src="شعار الماراثون.png" alt="شعار الماراثون العلمي الطلابي" class="marathon-logo w-auto shadow-md h-16">
                 </a>
             </div>
 
-            <!-- 2. Navigation Links (Center on Desktop, Hidden on Mobile) - IMPROVED SPACING FOR SINGLE ROW -->
+            <!-- 2. Navigation Links (Center on Desktop, Hidden on Mobile) -->
             <nav id="landing-nav" class="hidden xl:flex space-x-3 space-x-reverse lg:space-x-4 text-base font-medium absolute left-1/2 transform -translate-x-1/2">
                 <!-- DARK MODE: dark:text-gray-300 dark:hover:text-white -->
                 <a href="#tracks" onclick="internalScroll('tracks')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">المسارات</a>
@@ -317,7 +300,6 @@
                 <a href="#judges" onclick="internalScroll('judges')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">لجنة التحكيم</a>
                 <a href="#schedule" onclick="internalScroll('schedule')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">البرنامج الزمني</a>
                 <a href="#workshops" onclick="internalScroll('workshops')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">ورش العمل</a>
-                <!-- REMOVED from navbar: <a href="#team-formation-link" target="_blank" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap">تكوين الفرق</a> -->
                 <a href="#terms" onclick="internalScroll('terms')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الشروط</a>
                 <a href="#partners" onclick="internalScroll('partners')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الشركاء</a> 
                 <a href="#faq" onclick="internalScroll('faq')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الأسئلة الشائعة</a>
@@ -325,51 +307,88 @@
             
             <!-- 3. Actions Group (Left Side) -->
             <div class="flex items-center space-x-2 space-x-reverse">
-                <!-- UPDATED: Theme Toggle Button (Desktop/Tablet) - Changed visibility -->
-                <button id="theme-toggle-btn" onclick="toggleDarkMode()" class="hidden lg:block text-gray-600 dark:text-gray-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                
+                <!-- NEW: Theme Toggle Button (Mobile/Tablet - Appears in header) -->
+                <button id="theme-toggle-btn-mobile-header" onclick="toggleDarkMode()" class="xl:hidden text-gray-600 dark:text-gray-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
+                    <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
+                </button>
+                
+                <!-- Theme Toggle Button (Desktop/Large Tablet) -->
+                <button id="theme-toggle-btn-desktop" onclick="toggleDarkMode()" class="hidden xl:block text-gray-600 dark:text-gray-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                     <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
                     <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
                 </button>
                 
                 <!-- Registration Button (Desktop Only) -->
-                <!-- UPDATED: Changed visibility to lg:block -->
                 <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="hidden lg:block px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg shadow-blue-500/50 text-sm md:text-base dark:hover:bg-blue-600">
                     سجل الآن
                 </a>
                 
                 <!-- Registration Button (Mobile Only, next to logo) -->
-                <!-- UPDATED: Changed visibility to lg:hidden -->
                 <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="lg:hidden px-3 py-1.5 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg text-sm dark:hover:bg-blue-600">
                     سجل الآن
                 </a>
+                
+                <!-- Mobile Menu Button (Hamburger) - Positioned left on mobile (Moved to the end) -->
+                <button onclick="toggleMobileDropdown()" class="xl:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition dark:text-gray-300 dark:hover:bg-gray-700">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
             </div>
             
         </div>
-         <!-- Mobile Dropdown Menu (Underneath the Header) -->
-         <!-- DARK MODE: dark:bg-slate-800 dark:border-t dark:border-gray-700 -->
-         <!-- UPDATED: Changed visibility to lg:hidden -->
-        <div id="mobile-nav-dropdown" class="lg:hidden w-full dark:bg-slate-800 dark:border-t dark:border-gray-700">
-            <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileDropdown();">المسارات</a>
-            <a href="#rewards" onclick="internalScroll('rewards'); toggleMobileDropdown();">الجوائز</a>
-            <a href="#criteria" onclick="internalScroll('criteria'); toggleMobileDropdown();">معايير التحكيم</a>
-            <a href="#judges" onclick="internalScroll('judges'); toggleMobileDropdown();">لجنة التحكيم</a>
-            <a href="#schedule" onclick="internalScroll('schedule'); toggleMobileDropdown();">البرنامج الزمني</a>
-            <a href="#workshops" onclick="internalScroll('workshops'); toggleMobileDropdown();">ورش العمل</a>
-            <!-- REMOVED from mobile dropdown: <a href="#team-formation-link" target="_blank" onclick="toggleMobileDropdown();">تكوين الفرق</a> -->
-            <a href="#terms" onclick="internalScroll('terms'); toggleMobileDropdown();">الشروط والأحكام</a>
-            <a href="#partners" onclick="internalScroll('partners'); toggleMobileDropdown();">الشركاء</a> 
-            <a href="#faq" onclick="internalScroll('faq'); toggleMobileDropdown();">الأسئلة الشائعة</a>
-            
-            <!-- NEW: Theme Toggle Button (Mobile) -->
-            <a href="#" onclick="toggleDarkMode(); toggleMobileDropdown();" class="flex justify-between items-center">
-                <span>تغيير المظهر</span>
-                <span id="theme-toggle-btn-mobile"> <!-- Keep ID for potential specific styling if needed later -->
-                    <i data-lucide="moon" class="w-5 h-5 moon-icon"></i>
-                    <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
-                </span>
-            </a>
-        </div>
     </header>
+
+    <!-- NEW: Mobile Dropdown Menu (Side Drawer) - (Visible on iPad/Mobile) -->
+    <div id="mobile-nav-dropdown" class="dark:bg-slate-900">
+        <!-- Close Button at the top of the sidebar -->
+        <div class="p-4 flex justify-between items-center border-b border-gray-700">
+            <h3 class="text-lg font-bold text-white">قائمة الماراثون</h3>
+            <button onclick="toggleMobileDropdown()" class="text-gray-300 hover:text-white p-2 rounded-full transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        
+        <!-- Navigation Links -->
+        <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileDropdown();">
+            <span>المسارات</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <a href="#rewards" onclick="internalScroll('rewards'); toggleMobileDropdown();">
+            <span>الجوائز</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <a href="#criteria" onclick="internalScroll('criteria'); toggleMobileDropdown();">
+            <span>معايير التحكيم</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <a href="#judges" onclick="internalScroll('judges'); toggleMobileDropdown();">
+            <span>لجنة التحكيم</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <a href="#schedule" onclick="internalScroll('schedule'); toggleMobileDropdown();">
+            <span>البرنامج الزمني</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <a href="#workshops" onclick="internalScroll('workshops'); toggleMobileDropdown();">
+            <span>ورش العمل</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <a href="#terms" onclick="internalScroll('terms'); toggleMobileDropdown();">
+            <span>الشروط والأحكام</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <a href="#partners" onclick="internalScroll('partners'); toggleMobileDropdown();">
+            <span>الشركاء</span> 
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <a href="#faq" onclick="internalScroll('faq'); toggleMobileDropdown();">
+            <span>الأسئلة الشائعة</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+    </div>
+    <!-- NEW: Mobile Nav Overlay (Dark background behind sidebar) -->
+    <div id="mobile-nav-overlay" onclick="toggleMobileDropdown()"></div>
 
     <!-- 
         ========================================
@@ -696,7 +715,7 @@
                     </div>
                     
                     <!-- Item 2: بداية الورش (Activity) -->
-                    <!-- DARK MODE: dark:bg-slate-800 dark:border-blue-500 dark:text-gray-100 dark:text-blue-400 dark:text-gray-300 dark:text-gray-500 -->
+                    <!-- DARK MODE: dark:bg-slate-800 dark:border-blue-500 dark:text-gray-1st-light dark:text-blue-400 dark:text-gray-300 dark:text-gray-500 -->
                     <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-blue-500 dark:bg-slate-800 dark:border-blue-500">
                         <div class="flex items-center space-x-3 space-x-reverse mb-3">
                             <i data-lucide="activity" class="w-6 h-6 text-blue-600 dark:text-blue-500 flex-shrink-0"></i>
@@ -734,8 +753,8 @@
 
                 <!-- Row 2: Stages 5, 6, 7, 8 -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                     <!-- Item 5: إرسال القبول الرسمي (Notification) - Shifted one stage down -->
-                     <!-- DARK MODE: dark:bg-slate-800 dark:border-indigo-500 dark:text-gray-100 dark:text-blue-400 dark:text-gray-300 dark:text-gray-500 -->
+                    <!-- Item 5: إرسال القبول الرسمي (Notification) - Shifted one stage down -->
+                    <!-- DARK MODE: dark:bg-slate-800 dark:border-indigo-500 dark:text-gray-100 dark:text-blue-400 dark:text-gray-300 dark:text-gray-500 -->
                     <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-indigo-500 dark:bg-slate-800 dark:border-indigo-500">
                         <div class="flex items-center space-x-3 space-x-reverse mb-3">
                             <i data-lucide="mail-check" class="w-6 h-6 text-indigo-600 dark:text-indigo-500 flex-shrink-0"></i>
@@ -1081,7 +1100,7 @@
                             <p class="pb-10">ستتلقى رسالة تأكيد عبر البريد الإلكتروني. ستقوم لجنة التحكيم بمراجعة جميع الطلبات، وسيتم إخطار الفرق المؤهلة للمرحلة التالية في غضون أسبوعين من تاريخ الإغلاق.</p>
                         </div>
                     </div>
-                    
+
                     <!-- NEW FAQ Item 5 (Icon replaced with chevron) -->
                     <!-- DARK MODE: dark:bg-slate-800 dark:text-gray-200 dark:hover:bg-slate-700 dark:text-gray-400 -->
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
@@ -1176,7 +1195,6 @@
                     <a href="#judges" onclick="internalScroll('judges')" class="text-gray-400 hover:text-white">لجنة التحكيم</a>
                     <a href="#schedule" onclick="internalScroll('schedule')" class="text-gray-400 hover:text-white">البرنامج الزمني</a>
                     <a href="#workshops" onclick="internalScroll('workshops')" class="text-gray-400 hover:text-white">ورش العمل</a>
-                    <!-- REMOVED from footer: <a href="#team-formation-link" target="_blank" class="text-gray-400 hover:text-white">تكوين الفرق</a> -->
                     <a href="#terms" onclick="internalScroll('terms')" class="text-gray-400 hover:text-white">الشروط والأحكام</a>
                     <a href="#partners" onclick="internalScroll('partners')" class="text-gray-400 hover:text-white">الشركاء</a>
                     <a href="#faq" onclick="internalScroll('faq')" class="text-gray-400 hover:text-white">الأسئلة الشائعة</a>
@@ -1185,9 +1203,6 @@
         </footer>
     </div>
     
-    <!-- NOTE: The registration page view has been entirely removed as requested. -->
-
-
     <script>
         // Set the target date for the countdown (New date: 1 November 2025 at 00:00:00)
         const targetDate = new Date("2025-11-01T00:00:00").getTime();
@@ -1228,28 +1243,25 @@
                 createDigitBox(seconds, 'ثانية');
         }
 
-        // REMOVED: updateGlobalVisitCounter function
-
-        // Function to toggle the mobile menu dropdown
+        // Function to toggle the mobile menu dropdown (Side Drawer Logic)
         function toggleMobileDropdown() {
             const dropdown = document.getElementById('mobile-nav-dropdown');
-            // UPDATED: Use LG breakpoint for dropdown visibility
-            const isDesktopOrLargeTablet = window.innerWidth >= 1024; // 1024px is lg breakpoint
-            if (isDesktopOrLargeTablet) return; // Prevent dropdown on larger screens
+            const overlay = document.getElementById('mobile-nav-overlay');
+            // Prevent dropdown on large screens (desktop)
+            const isDesktop = window.innerWidth >= 1280; 
+            if (isDesktop) return; 
 
             if (dropdown.classList.contains('open')) {
+                // Close: Slide out and hide overlay
                 dropdown.classList.remove('open');
-                dropdown.style.maxHeight = null;
+                overlay.classList.remove('open');
             } else {
+                // Open: Slide in and show overlay
                 dropdown.classList.add('open');
-                // Calculate and set max-height dynamically for smooth transition
-                dropdown.style.maxHeight = dropdown.scrollHeight + 'px';
+                overlay.classList.add('open');
             }
         }
 
-
-        // Initialize Lucide icons
-        lucide.createIcons();
 
         // Function for smooth internal scrolling (used only on the landing page)
         function internalScroll(id) {
@@ -1258,26 +1270,17 @@
                 // Get the offset to account for the fixed header height
                 const headerHeight = document.getElementById('main-header').offsetHeight;
                 
-                // Use getBoundingClientRect().top for relative position to viewport.
-                // Scroll to the element's position relative to the document top (window.pageYOffset + element.getBoundingClientRect().top)
-                // and subtract the header height (plus temporary padding of 20px)
-                // This ensures the element's top is visible below the header.
-                // Reverting to -20 offset as requested for better visual positioning
+                // Scroll to the element's position relative to the document top and subtract the header height
                 const topPosition = window.pageYOffset + element.getBoundingClientRect().top - headerHeight - 20; 
                 
                 window.scrollTo({
                     top: topPosition,
-                    behavior: 'smooth' // This ensures the dynamic scrolling animation without 'glitching'
+                    behavior: 'smooth' 
                 });
-            }
-            // Close mobile menu after clicking a link
-            const dropdown = document.getElementById('mobile-nav-dropdown');
-            if (dropdown.classList.contains('open')) {
-                toggleMobileDropdown();
             }
         }
         
-        // Function to handle accordion toggling - FIX APPLIED HERE
+        // Function to handle accordion toggling
         function toggleAccordion(button) {
             const content = button.nextElementSibling;
             const icon = button.querySelector('.accordion-icon');
@@ -1290,7 +1293,6 @@
                     header.classList.remove('active');
                     otherContent.style.maxHeight = null;
                     if(otherIcon) otherIcon.classList.remove('rotate-180');
-                    // Removed paddingTop reset as the padding is now controlled by the <p> class pb-4
                 }
             });
             
@@ -1300,18 +1302,16 @@
             if (content.style.maxHeight) {
                 // إغلاق
                 content.style.maxHeight = null;
-                // Removed paddingTop set as the padding is now controlled by the <p> class pb-4
                 if(icon) icon.classList.remove('rotate-180');
             } 
             else {
                 // فتح
                 content.style.maxHeight = content.scrollHeight + 'px';
-                // Removed paddingTop set as the padding is now controlled by the <p> class pb-4
                 if(icon) icon.classList.add('rotate-180');
             }
         }
 
-        // --- NEW: Dark Mode Logic ---
+        // --- NEW: Dark Mode Logic (Kept the same) ---
         
         /**
          * Applies the saved theme from localStorage or system preference.
@@ -1326,7 +1326,6 @@
                 document.documentElement.classList.remove('dark');
             }
             // Re-create icons to reflect the theme change (sun/moon)
-            // Call this AFTER adding/removing the 'dark' class
             lucide.createIcons();
         }
 
@@ -1342,7 +1341,6 @@
                 localStorage.setItem('theme', 'dark');
             }
             // Re-create icons to reflect the theme change (sun/moon)
-            // Call this AFTER adding/removing the 'dark' class
             lucide.createIcons();
         }
 
@@ -1352,32 +1350,38 @@
         // Initial setup
         document.addEventListener('DOMContentLoaded', () => {
             // NEW: Initialize theme first
-            initializeTheme(); // This now also calls lucide.createIcons() initially
+            initializeTheme();
             
             // Run the countdown immediately and then every second
             updateCountdown();
             setInterval(updateCountdown, 1000);
-            // REMOVED: updateGlobalVisitCounter();
             
             // Canvas/Atom Drawing (Must run after DOMContentLoaded)
             const canvas = document.getElementById("atom-bg");
             const ctx = canvas.getContext("2d");
 
             let particles = [];
-            // DEFAULT DENSITY
+            
+            // Initial Density (will be updated by resize handler)
             let numParticles = 150; 
-            // DEFAULT MOVEMENT SPEED
+            // Initial Speed Factor (will be updated by resize handler)
             let speedFactor = 0.7; 
             
-            // INCREASED CONNECTION RANGE
             const maxDistance = 250; 
-            // INCREASED PARTICLE SIZE AND SPEED
             const maxRadius = 4; 
 
-            // Initial setting based on screen size
-            if (window.innerWidth < 1024) {
-                numParticles = 100; // Less dense on mobile
-                speedFactor = 1.2; // Faster movement on mobile
+            function updateParticleSettings() {
+                // ADJUSTED SPEED AND DENSITY FOR MOBILE/IPAD
+                if (window.innerWidth < 768) {
+                    numParticles = 100; // Less dense on mobile
+                    speedFactor = 1.2; // Faster movement on mobile (1.2x default)
+                } else if (window.innerWidth < 1280) {
+                    numParticles = 120; // Medium density on iPad/Tablet
+                    speedFactor = 0.9; // Slightly faster movement on iPad/Tablet (0.9x default speed - original desktop was 0.7)
+                } else {
+                    numParticles = 150; // Desktop density
+                    speedFactor = 0.7; // Desktop speed
+                }
             }
 
             function resizeCanvas() {
@@ -1402,11 +1406,9 @@
             const debouncedResizeHandler = debounce(() => {
                 resizeCanvas();
                 // Re-initialize particles on resize to apply correct density/speed
+                updateParticleSettings();
                 particles = [];
-                // ADJUSTED: Sm screens (iPad Portrait) speed and density
-                numParticles = window.innerWidth < 768 ? 100 : (window.innerWidth < 1024 ? 120 : 150);
-                speedFactor = window.innerWidth < 768 ? 1.2 : (window.innerWidth < 1024 ? 0.9 : 0.7);
-
+                
                 for (let i = 0; i < numParticles; i++) {
                     particles.push({
                         x: Math.random() * canvas.width,
@@ -1417,7 +1419,23 @@
                         color: ["#1d4edd", "#34d399", "#7c3aed"][Math.floor(Math.random() * 3)]
                     });
                 }
-            }, 250); // Adjust debounce delay as needed (e.g., 250ms)
+            }, 250); 
+
+            // Initialize settings and particles based on initial load
+            updateParticleSettings();
+            resizeCanvas(); 
+
+            for (let i = 0; i < numParticles; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * (maxRadius - 1) + 1, 
+                    dx: (Math.random() - 0.5) * speedFactor, 
+                    dy: (Math.random() - 0.5) * speedFactor, 
+                    color: ["#1d4edd", "#34d399", "#7c3aed"][Math.floor(Math.random() * 3)] // ألوان الشعار
+                });
+            }
+
 
             window.addEventListener("resize", debouncedResizeHandler);
             
@@ -1428,44 +1446,30 @@
                 });
                 resizeObserver.observe(document.body);
             } else {
-                 // Fallback for older browsers
-                 window.addEventListener("resize", debouncedResizeHandler);
+                // Fallback for older browsers
+                window.addEventListener("resize", debouncedResizeHandler);
             }
-           
-            resizeCanvas(); // Initial size
-
-            // إنشاء الذرات
-            for (let i = 0; i < numParticles; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    r: Math.random() * (maxRadius - 1) + 1, // Use new maxRadius
-                    dx: (Math.random() - 0.5) * speedFactor, // Apply initial speed factor
-                    dy: (Math.random() - 0.5) * speedFactor, 
-                    color: ["#1d4edd", "#34d399", "#7c3aed"][Math.floor(Math.random() * 3)] // ألوان الشعار
-                });
-            }
-
+            
             let animationFrameId = null; // To control the animation loop
 
             function draw() {
-                // Ensure canvas dimensions are up-to-date before drawing
-                 if (canvas.width !== window.innerWidth || canvas.height !== Math.max(document.body.scrollHeight, window.innerHeight)) {
-                    resizeCanvas(); // Update canvas size if body size changed
+                // 1. Re-check canvas size dynamically for scrolling content (if needed)
+                if (canvas.height !== Math.max(document.body.scrollHeight, window.innerHeight)) {
+                    resizeCanvas();
                 }
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // رسم الذرات
+                // 2. رسم الذرات
                 for (let p of particles) {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    // INCREASED OPACITY for particle fill
-                    ctx.fillStyle = p.color + "55"; 
+                    // INCREASED OPACITY for particle fill (from 55 to 99)
+                    ctx.fillStyle = p.color + "99"; 
                     ctx.fill();
                 }
 
-                // رسم الخطوط بين الذرات القريبة
+                // 3. رسم الخطوط بين الذرات القريبة
                 for (let i = 0; i < particles.length; i++) {
                     for (let j = i + 1; j < particles.length; j++) {
                         const a = particles[i];
@@ -1479,7 +1483,7 @@
                             ctx.beginPath();
                             ctx.moveTo(a.x, a.y);
                             ctx.lineTo(b.x, b.y);
-                            // ضبط شفافية الخط بناءً على القرب (أكثر وضوحاً)
+                            // INCREASED LINE OPACITY for contrast (from 100 to 200)
                             ctx.strokeStyle = a.color + Math.floor(opacity * 200).toString(16).padStart(2, '0');
                             ctx.lineWidth = 1; // Thicker lines
                             ctx.stroke();
@@ -1487,25 +1491,24 @@
                     }
                 }
 
-                // حركة الذرات
+                // 4. حركة الذرات
                 for (let p of particles) {
                     p.x += p.dx;
                     p.y += p.dy;
 
                     // ارتداد الذرات عند الوصول للحافة
-                    // Ensure particles stay within the current canvas dimensions
                     if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
                     if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
 
-                     // Keep particles within bounds explicitly (optional safety net)
-                     p.x = Math.max(0, Math.min(p.x, canvas.width));
-                     p.y = Math.max(0, Math.min(p.y, canvas.height));
+                    // Keep particles within bounds explicitly 
+                    p.x = Math.max(0, Math.min(p.x, canvas.width));
+                    p.y = Math.max(0, Math.min(p.y, canvas.height));
                 }
 
                 animationFrameId = requestAnimationFrame(draw); // Store the frame ID
             }
 
-             // Function to start the animation
+            // Function to start the animation
             function startAnimation() {
                 if (!animationFrameId) { // Only start if not already running
                     draw();
@@ -1523,7 +1526,7 @@
             // Start the animation initially
             startAnimation();
 
-             // Optional: Pause animation when tab is not visible to save resources
+            // Optional: Pause animation when tab is not visible to save resources
             document.addEventListener("visibilitychange", () => {
                 if (document.hidden) {
                     stopAnimation();
@@ -1535,4 +1538,3 @@
     </script>
 </body>
 </html>
-
