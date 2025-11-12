@@ -1343,8 +1343,8 @@
     // *تعديل: تم إزالة md:text-4xl. الآن الجوال والآيباد يستخدمان text-4xl*
     // *الحاسب فقط يستخدم lg:text-6xl*
     const createDigitBox = (value, label) => `
-        <div class="countdown-digit p-3 lg:p-5 rounded-xl w-full"> 
-            <div class="text-4xl lg:text-6xl font-mono font-bold">${String(value).padStart(2, '0')}</div>
+        <div class="countdown-digit p-3 xl:p-5 rounded-xl w-full"> 
+            <div class="text-4xl xl:text-6xl font-mono font-bold">${String(value).padStart(2, '0')}</div>
             <div class="text-xs md:text-sm mt-1 text-gray-300">${label}</div>
         </div>
     `;
