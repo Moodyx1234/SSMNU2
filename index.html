@@ -751,19 +751,20 @@
             </div>
             
             <div class="flex flex-col md:flex-row justify-center items-center gap-4 mb-10 md:mb-0">
-                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse px-10 py-4 bg-nu-accent text-gray-900 text-xl font-bold rounded-xl hover:bg-nu-accent/90 transition duration-300 transform hover:scale-105 shadow-xl shadow-nu-accent/70">
+                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse px-8 py-3.5 text-lg md:px-10 md:py-4 md:text-xl bg-nu-accent text-gray-900 font-bold rounded-xl hover:bg-nu-accent/90 transition duration-300 transform hover:scale-105 shadow-xl shadow-nu-accent/70">
                         <span>سجل لتقديم مشروعك الابتكاري</span>
-                        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                        <i data-lucide="arrow-left" class="w-5 h-5 md:w-6 md:h-6"></i>
                 </a>
 
-                <a href="دليل المشاركة.pdf" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse px-8 py-4 bg-nu-secondary text-white text-xl font-bold rounded-xl hover:bg-[#056a79] transition duration-300 transform hover:scale-105 shadow-xl shadow-nu-secondary/70">
+                <a href="دليل المشاركة.pdf" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse px-6 py-3.5 text-lg md:px-8 md:py-4 md:text-xl bg-nu-secondary text-white font-bold rounded-xl hover:bg-[#056a79] transition duration-300 transform hover:scale-105 shadow-xl shadow-nu-secondary/70">
                     <span>دليل الهاكاثون</span>
-                    <i data-lucide="external-link" class="w-6 h-6"></i>
+                    <i data-lucide="external-link" class="w-5 h-5 md:w-6 md:h-6"></i>
                 </a>
             </div>
         </div>
     </div>
 </section>
+
         <section id="tracks" class="py-16 md:py-24 relative z-10"> 
             <div class="container mx-auto px-4 relative z-10"> 
                 <h3 class="text-4xl font-bold text-center text-gray-900 mb-4 dark:text-white">مسارات الهاكاثون</h3>
@@ -1339,10 +1340,10 @@
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // *تعديل: تم زيادة حجم خط الجوال إلى text-4xl ليكون واضحاً وبارزاً*
+    // *تعديل: تم تقليل حجم خط الآيباد من 5xl إلى 4xl لمنع الخروج عن الإطار*
     const createDigitBox = (value, label) => `
         <div class="countdown-digit p-3 md:p-4 lg:p-5 rounded-xl w-full"> 
-            <div class="text-4xl md:text-5xl lg:text-6xl font-mono font-bold">${String(value).padStart(2, '0')}</div>
+            <div class="text-4xl md:text-4xl lg:text-6xl font-mono font-bold">${String(value).padStart(2, '0')}</div>
             <div class="text-xs md:text-sm mt-1 text-gray-300">${label}</div>
         </div>
     `;
