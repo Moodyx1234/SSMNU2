@@ -5,23 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NUThon - منصة التقديم</title>
     <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
     <script>
-        // Tell Tailwind to use the 'dark' class on the <html> element
+        // 1. تاريخ إغلاق التسجيل (يستخدم للعد التنازلي)
+        const REGISTRATION_CLOSURE_DATE = new Date("2025-12-30T23:59:59Z").getTime();
+
+        // 2. (بيانات اختبار محدثة) - لضمان عمل "انضم الآن" في هذا الوقت
+        // (تم ضبطها بناءً على الوقت الحالي: 12 نوفمبر، 10:57م)
+        const WORKSHOP_UTC_DATES = {
+            // (1) حالة "منتهية" - تم تحديدها أمس (11 نوفمبر)
+            '1': "2025-11-18T18:30:00Z", 
+
+            // (2) حالة "انضم الآن" - تم تحديدها اليوم 10:30م (19:30 UTC)
+            // (بما أن الوقت 10:57م، فهو يقع ضمن نافذة الـ 4 ساعات)
+            '2': "2025-11-19T15:30:00Z", 
+
+            // (3) حالة "قريباً" - تم تحديدها غداً (13 نوفمبر)
+            '3': "2025-11-23T12:30:00Z",
+            
+            // (بقية الورش ستظهر "قريباً" أيضاً)
+            '4': "2025-11-26T12:30:00Z", 
+            '5': "2025-12-10T19:30:00Z", 
+            '6': "2025-12-14T13:30:00Z", 
+            '7': "2025-12-15T17:30:00Z", 
+            '8': "2026-01-25T11:00:00Z", 
+            '9': "2026-01-26T11:00:00Z", 
+            '10': "2026-01-27T11:00:00Z",
+        };
+
+
+        // تهيئة Tailwind لتضمين الألوان المخصصة والرسوم المتحركة
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    // Custom animation for spinning loader and button pulse
+                    colors: {
+                        // تعريف الألوان الجديدة كفئات يمكن استخدامها في Tailwind
+                        // تم تغيير Primary هنا ولكن سيتم تجاهله في خلفية الـ Dark Mode يدوياً في CSS
+                        'nu-primary': '#163d6a',     // كحلي/أزرق داكن (للنصوص الداكنة والمكونات)
+                        'nu-secondary': '#078394',   // أزرق مائل للأخضر (أساسي)
+                        'nu-accent': '#daac58',      // أصفر/ذهبي (التمييز)
+                        'nu-purple': '#36b7c3',      // أزرق فاتح (بديل التمييز في Dark Mode)
+                        'nu-light-bg': '#ebf4f6',    // رمادي فاتح (لون الخلفية في Light Mode)
+                        // ألوان الخط الزمني - تم استخدام فئات Tailwind المدمجة (مثل emerald-400) بشكل مباشر لتكون أكثر مرونة
+                        'nu-main-color': '#078394',
+                        'nu-secondary-color': '#078394', 
+                    },
                     keyframes: {
-                        spin: {
-                            to: { transform: 'rotate(360deg)' },
+                        spin: { to: { transform: 'rotate(360deg)' } },
+                        ping: { '75%, 100%': { transform: 'scale(2)', opacity: '0' } },
+                        'glow-pulse': { // تم تحديث اللون في التوهج
+                            '0%, 100%': { boxShadow: '0 0 10px rgba(218, 172, 88, 0.4)' },
+                            '50%': { boxShadow: '0 0 20px rgba(218, 172, 88, 0.8)' },
                         },
                     },
                     animation: {
                         spin: 'spin 1s linear infinite',
+                        ping: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'glow-pulse': 'glow-pulse 2s infinite ease-in-out',
                     },
                 },
             },
@@ -29,35 +73,57 @@
     </script>
     
     <style>
-        /* Define a custom color scheme based on professionalism and energy */
+        /* تعريف متغيرات CSS (تم تحديثها لتطبيقات المحتوى) */
         :root {
-            --color-primary: #0f172a; /* Slate 900 - Dark mode background */
-            --color-secondary: #1d4edd; /* Blue 700 - Buttons/Active state */
-            --color-accent: #34d399; /* Emerald 400 (Green) - Highlight/CTA */
-            --color-orange: #f97316; /* Orange 600 - Tertiary */
-            --color-purple: #7c3aed; /* New Purple color for atoms */
-            --color-background-light: #f8fafc; /* Slate 50 - Light mode base */
-            --overlay-color: rgba(15, 23, 42, 0.85); /* Dark overlay for text clarity (Increased opacity) */
+            --color-primary: #163d6a; /* كحلي */
+            --color-secondary: #078394; /* أزرق مائل للأخضر */
+            --color-accent: #daac58; /* أصفر/ذهبي */
+            --color-purple: #36b7c3; /* أزرق فاتح */
+            --color-background-light: #ebf4f6; /* رمادي فاتح */
+            --nu-main-color: #078394; 
+            --nu-secondary-color: #078394; 
         }
         
+        @font-face {
+            font-family: 'DIN Next LT Arabic';
+            src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//DINNEXTLTARABIC-LIGHT-2-2.ttf') format('truetype');
+            font-weight: 300; /* الوزن الخفيف */
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'DIN Next LT Arabic';
+            src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//DINNextLTArabic-Medium-4.ttf') format('truetype');
+            font-weight: 500; /* الوزن العادي */
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'DIN Next LT Arabic';
+            src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//DINNextLTArabic-Bold-4.ttf') format('truetype');
+            font-weight: 700; /* الوزن العريض */
+            font-style: normal;
+        }
+
+        
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'DIN Next LT Arabic', sans-serif;
             background-color: var(--color-background-light); 
             transition: background-color 0.3s;
             position: relative;
             min-height: 100vh;
             overflow-x: hidden; 
             
-            /* الزينة النقطية (Dot Pattern) */
+            /* الخلفية النقطية لـ Light Mode (تم استرجاع لون النقط إلى الأصل) */
             background-image: 
                 linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px), 
                 linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px);
             background-size: 50px 50px; 
         }
 
-        /* Dark mode background pattern */
+        /* Dark mode background pattern - تم استرجاعه للون الأصلي #0f172a (Slate 900) */
         html.dark body {
-            background-color: #0f172a; /* Slate 900 */
+            background-color: #0f172a; /* Slate 900 (اللون الأصلي) */
             background-image: 
                 linear-gradient(0deg, transparent 9px, rgba(255, 255, 255, 0.03) 10px, transparent 11px), 
                 linear-gradient(90deg, transparent 9px, rgba(255, 255, 255, 0.03) 10px, transparent 11px);
@@ -67,33 +133,35 @@
         /* Custom Box Style for Total Rewards (مجموع الجوائز) */
         /* ----------------------------------------------------------------- */
         .total-rewards-box {
-            /* Light Mode Style */
             display: inline-block;
             padding: 1rem 2rem;
-            background: linear-gradient(135deg, #1d4edd 0%, #103cba 100%); /* Blue Gradient */
+            /* تم تحديث التدرج للون الثانوي الجديد (أزرق مائل للأخضر) */
+            background: linear-gradient(135deg, var(--color-secondary) 0%, #056a79 100%); 
             color: white;
             border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(29, 78, 217, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* تم تحديث ظل الصندوق للون الثانوي الجديد (أزرق مائل للأخضر) */
+            box-shadow: 0 10px 20px rgba(7, 131, 148, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 10;
-            /* Animated border (subtle) */
             animation: pulse-border 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
         }
         
         html.dark .total-rewards-box {
-            /* Dark Mode Style */
-            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); /* Purple Gradient in Dark Mode */
-            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+            /* تم تحديث التدرج للون الأرجواني الجديد (أزرق فاتح) */
+            background: linear-gradient(135deg, var(--color-purple) 0%, #2f98a2 100%); 
+            /* تم تحديث ظل الصندوق للون الأرجواني الجديد (أزرق فاتح) */
+            box-shadow: 0 10px 20px rgba(54, 183, 195, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
             animation: pulse-border-dark 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
         }
 
+        /* تم تحديث الرسوم المتحركة لحدود الصندوق لتعكس الألوان الجديدة */
         @keyframes pulse-border {
-            0%, 100% { box-shadow: 0 0 0 0px rgba(29, 78, 217, 0.7); }
-            50% { box-shadow: 0 0 0 8px rgba(29, 78, 217, 0); }
+            0%, 100% { box-shadow: 0 0 0 0px rgba(7, 131, 148, 0.7); } /* لون ثانوي جديد */
+            50% { box-shadow: 0 0 0 8px rgba(7, 131, 148, 0); }
         }
         @keyframes pulse-border-dark {
-            0%, 100% { box-shadow: 0 0 0 0px rgba(124, 58, 237, 0.7); }
-            50% { box-shadow: 0 0 0 8px rgba(124, 58, 237, 0); }
+            0%, 100% { box-shadow: 0 0 0 0px rgba(54, 183, 195, 0.7); } /* لون أزرق فاتح جديد */
+            50% { box-shadow: 0 0 0 8px rgba(54, 183, 195, 0); }
         }
         /* ----------------------------------------------------------------- */
 
@@ -134,21 +202,30 @@
 
         /* Countdown styling */
         .countdown-digit {
+            /* تم الاحتفاظ بالخلفية لتبدو متوهجة على الـ Hero Section */
             background-color: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
-        /* Schedule Card Styling - Reduced opacity for subtle effect in dark mode */
-        html.dark .schedule-card {
-            background-color: rgba(30, 41, 59, 0.85); /* slate-800 equivalent with opacity */
-        }
-        
         /* HERO BACKGROUND STYLING WITH IMAGE AND OVERLAY */
         .hero-bg {
-            /* Note: NU.jpg is a mock image reference, kept for consistency */
             background-image: url('خلفية.jpg'); 
+            background-size: auto;
+            background-position: center;
+            /* إضافة تدرج لتعتيم الصورة وجعل النص واضحًا */
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            /* تم تحديث التدرج ليعكس الألوان الجديدة: من الكحلي إلى الثانوي/الأزرق المائل للأخضر */
+            background: linear-gradient(180deg, rgba(22, 61, 106, 0.8) 0%, rgba(7, 131, 148, 0.5) 100%);
+            z-index: 1;
         }
         
         /* Ensure content is above the overlay */
@@ -170,7 +247,7 @@
         }
 
         /* ---------------------------------------------------- */
-        /* Dropdown Menu Styles for Mobile (Side Drawer)  */
+        /* Dropdown Menu Styles for Mobile (Side Drawer) - تم تحديث لون الخلفية الداكن */
         /* ---------------------------------------------------- */
         #mobile-nav-dropdown {
             position: fixed; 
@@ -181,7 +258,7 @@
             height: 100%; 
             z-index: 55; 
             
-            background-color: var(--color-primary); 
+            background-color: var(--color-primary); /* كحلي */
             box-shadow: -4px 0 10px rgba(0, 0, 0, 0.5); 
             overflow-y: auto; 
             
@@ -191,7 +268,7 @@
             display: none; 
         }
         
-        @media (max-width: 1279px) { /* Show only up to xl breakpoint */
+        @media (max-width: 1279px) { 
             #mobile-nav-dropdown {
                 display: block;
             }
@@ -238,24 +315,24 @@
 
         html.dark .moon-icon { display: none; }
         html.dark .sun-icon { display: block; }
-
+        
         /* NEW: Strategic Partner Styling */
         .strategic-partner-logo {
             padding: 1rem;
-            background: #ffffff;
+            background: var(--nu-light-bg);
             border-radius: 16px;
-            border: 4px solid var(--color-secondary);
-            box-shadow: 0 15px 30px rgba(29, 78, 217, 0.2);
+            border: 4px solid var(--color-secondary); /* أزرق مائل للأخضر */
+            box-shadow: 0 15px 30px rgba(7, 131, 148, 0.2); /* أزرق مائل للأخضر */
             transition: all 0.3s ease-in-out;
         }
         .strategic-partner-logo:hover {
             transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(29, 78, 217, 0.3);
+            box-shadow: 0 20px 40px rgba(7, 131, 148, 0.3); /* أزرق مائل للأخضر */
         }
         html.dark .strategic-partner-logo {
-            background: #f8fafc; /* Keep logo readable on light background */
-            border-color: #7c3aed; /* Purple border in dark mode */
-            box-shadow: 0 15px 30px rgba(124, 58, 237, 0.2);
+            background: var(--nu-light-bg); 
+            border-color: var(--color-purple); /* أزرق فاتح */
+            box-shadow: 0 15px 30px rgba(54, 183, 195, 0.2); /* أزرق فاتح */
         }
         
         /* ---------------------------------------------------- */
@@ -266,51 +343,41 @@
             align-items: center;
             justify-content: center;
             padding: 0.5rem 1rem;
-            border-radius: 9999px; /* Full rounded */
+            border-radius: 9999px;
             font-weight: 700;
-            font-size: 0.875rem; /* text-sm */
-            transition: all 0.3s ease-in-out; /* Smoother transitions */
+            font-size: 0.875rem; 
+            transition: all 0.3s ease-in-out; 
             width: fit-content;
             margin-top: 1rem;
             text-decoration: none; 
-            border: 2px solid transparent; /* Base border for all */
+            border: 2px solid transparent; 
         }
 
-        /* Status: Available (متاح) - Blue with accent pulse */
         .status-available {
-            background-color: var(--color-secondary); /* Blue 700 */
+            background-color: var(--color-secondary); /* أزرق مائل للأخضر */
             color: white; 
-            border-color: var(--color-accent); /* Emerald border */
-            box-shadow: 0 0 15px rgba(52, 211, 153, 0.5); /* Emerald Glow */
+            border-color: var(--color-accent); /* أصفر/ذهبي */
+            box-shadow: 0 0 15px rgba(218, 172, 88, 0.5); /* أصفر/ذهبي */
             cursor: pointer;
-            animation: glow-pulse 2s infinite ease-in-out;
+            animation: glow-pulse 2s infinite ease-in-out; 
         }
         .status-available:hover {
-            background-color: #1e40af; /* Blue 800 */
+            background-color: #056a79; /* تظليل أغمق للأزرق المائل للأخضر */
             transform: scale(1.03);
         }
 
-        /* Animation for Available button - Emerald Pulse */
-        @keyframes glow-pulse {
-            0% { box-shadow: 0 0 10px rgba(52, 211, 153, 0.4); }
-            50% { box-shadow: 0 0 20px rgba(52, 211, 153, 0.8); }
-            100% { box-shadow: 0 0 10px rgba(52, 211, 153, 0.4); }
-        }
-
-        /* Status: Pending (قريبًا) - Subtle Purple, implies preparation */
         .status-pending {
-            background-color: #8b5cf6; /* Violet 500 */
+            background-color: var(--color-purple); /* أزرق فاتح */
             color: white;
-            border-color: #c4b5fd; /* Violet 300 lighter border */
+            border-color: #a4e1e6; /* تظليل أفتح للأزرق الفاتح */
             opacity: 0.95;
             cursor: default;
         }
 
-        /* Status: Ended (منتهي) - Muted, dashed border to look final/archived */
         .status-ended {
-            background-color: #f3f4f6; /* Gray 100 (Light Mode) */
-            color: #6b7280; /* Gray 500 */
-            border-color: #9ca3af; /* Gray 400 */
+            background-color: #f3f4f6; 
+            color: #6b7280; 
+            border-color: #9ca3af; 
             border-style: dashed;
             opacity: 0.8;
             cursor: default;
@@ -318,42 +385,228 @@
         }
         
         html.dark .status-ended {
-             background-color: #374151; /* Gray 700 Dark Mode */
-             color: #d1d5db; /* Gray 300 */
-             border-color: #4b5563; /* Gray 600 Dark Mode */
+             background-color: #374151;
+             color: #d1d5db; 
+             border-color: #4b5563; 
         }
         /* ---------------------------------------------------- */
 
         /* ----------------------------------------------------------------- */
-        /* START: NEW LOGO SWAP STYLING for Dark/Light Mode */
+        /* START: NEW LOGO SWAP STYLING - تم الحفاظ عليها كما هي */
         /* ----------------------------------------------------------------- */
-
-        /* Base style applied to both logos for consistent size (Replacing the inline tailwind classes) */
         .marathon-logo-base {
             width: auto; 
-            height: 4rem; /* h-16 equivalent (64px) */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md equivalent */
+            height: 4rem; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); 
         }
-
-        /* Default (Light Mode) Styling */
-        .logo-light {
-            display: block; /* Show light logo by default */
-        }
-        .logo-dark {
-            display: none; /* Hide dark logo by default */
-        }
-
-        /* Dark Mode Overrides (when html has class 'dark') */
-        html.dark .logo-light {
-            display: none; /* Hide light logo in dark mode */
-        }
-        html.dark .logo-dark {
-            display: block; /* Show dark logo in dark mode */
-        }
-        /* ----------------------------------------------------------------- */
-        /* END: NEW LOGO SWAP STYLING */
+        .logo-light { display: block; }
+        .logo-dark { display: none; }
+        html.dark .logo-light { display: none; }
+        html.dark .logo-dark { display: block; }
         /* ----------------------------------------------------------------- */
 
+        /* ---------------------------------------------------- */
+        /* START: TIMELINE STYLES - تم تحديث الألوان هنا */
+        /* ---------------------------------------------------- */
+        .timeline-line {
+            pointer-events: none;
+            position: absolute;
+            right: 50%;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            transform: translateX(50%);
+            /* أزرق مائل للأخضر في Light Mode */
+            background-color: var(--color-secondary); 
+        }
+        html.dark .timeline-line {
+            /* أزرق فاتح في Dark Mode */
+            background-color: var(--color-purple); 
+        }
+        @media (max-width: 1023px) { 
+            .timeline-line {
+            right: 1.5rem;
+            transform: translateX(0);
+            width: 2px;
+            }
+        }
+        .timeline-dot {
+            position: absolute;
+            top: 0;
+            left: 50%; 
+            transform: translateX(-50%);
+            z-index: 20; 
+            height: 16px;
+            width: 16px;
+            border-radius: 9999px;
+            border: 2px solid var(--color-accent); /* أصفر/ذهبي */
+            background-color: var(--color-secondary); /* أزرق مائل للأخضر */
+        }
+        html.dark .timeline-dot {
+            border-color: var(--color-accent); /* أصفر/ذهبي */
+            background-color: var(--color-purple); /* أزرق فاتح */
+        }
+        @media (max-width: 1023px) { 
+            .timeline-dot {
+                left: auto;
+                right: 1.25rem; 
+                transform: translateX(0);
+                margin-right: -8px; 
+            }
+        }
+        .timeline-dot::before {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border-radius: 9999px;
+            background-color: var(--color-accent); /* أصفر/ذهبي */
+            opacity: 0.5;
+            animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        .timeline-item-container {
+            position: relative;
+            margin-bottom: 3.5rem;
+        }
+        /* الأنماط الرئيسية لبطاقة الخط الزمني */
+        .timeline-card-wrapper {
+            position: relative;
+            z-index: 10;
+            padding: 1.5rem; 
+            border-radius: 1.5rem;
+            /* Light Mode */
+            background-color: white; 
+            border: 2px solid var(--color-secondary); /* إطار أزرق مائل للأخضر */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 90%; 
+        }
+        html.dark .timeline-card-wrapper {
+            /* Dark Mode */
+            background-color: rgba(30, 41, 59, 0.95); /* Slate 800 داكن - تم تركه ليكون تباين مع الخلفية الأصلية (#0f172a) */
+            border-color: var(--color-purple); /* إطار أزرق فاتح في Dark Mode */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            color: white; 
+        }
+
+        /* الألوان الداخلية للنصوص */
+        .timeline-number {
+            color: var(--color-secondary); /* أزرق مائل للأخضر في Light Mode */
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+        html.dark .timeline-number {
+            color: var(--color-accent); /* أصفر/ذهبي في Dark Mode */
+        }
+
+        .timeline-title {
+            color: var(--color-primary); /* كحلي في Light Mode */
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        html.dark .timeline-title {
+            color: white; 
+        }
+
+        .timeline-date {
+            color: #475569; /* Slate 600 في Light Mode */
+            font-size: 1.125rem;
+            direction: rtl;
+        }
+        html.dark .timeline-date {
+            color: #94a3b8; /* Slate 400 في Dark Mode */
+        }
+        
+        .timeline-description {
+            color: #64748b; /* Slate 500 في Light Mode */
+            font-size: 0.95rem;
+            margin-top: 0.75rem;
+        }
+        html.dark .timeline-description {
+            color: #e2e8f0; /* Slate 200 في Dark Mode */
+        }
+
+        /* ---------------------------------------------------- */
+        /* Accordion Icons - تم تحديث الألوان هنا */
+        /* ---------------------------------------------------- */
+        .accordion-icon {
+            color: var(--color-secondary); /* أزرق مائل للأخضر في Light Mode */
+        }
+        html.dark .accordion-icon {
+            color: var(--color-purple); /* أزرق فاتح في Dark Mode */
+        }
+        
+        /* ---------------------------------------------------- */
+        /* Terms and Conditions (الشروط والأحكام) - تم تحديث الألوان هنا */
+        /* ---------------------------------------------------- */
+        .border-r-4.border-nu-secondary {
+            border-color: var(--color-secondary); /* أزرق مائل للأخضر */
+        }
+        html.dark .border-r-4.border-nu-secondary {
+            border-color: var(--color-purple); /* أزرق فاتح */
+        }
+        .text-nu-secondary {
+            color: var(--color-secondary); /* أزرق مائل للأخضر */
+        }
+        /* تم ترك لون النصوص في الشروط والأحكام داكناً في Dark Mode ليظهر على الحدود الزرقاء الفاتحة */
+        html.dark .text-nu-secondary {
+            color: var(--color-purple); /* أزرق فاتح */
+        }
+        /* ---------------------------------------------------- */
+        
+        /* ----------------------------------------------------------------- */
+        /* NEW: Dark Mode Header */
+        /* ----------------------------------------------------------------- */
+        html.dark #main-header {
+            background-color: #0f172a; /* Slate 900 الأصلي */
+            box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.1), 0 2px 4px -2px rgba(255, 255, 255, 0.05);
+        }
+
+
+        @media (min-width: 1024px) {
+            .timeline-item-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .timeline-item-left {
+                width: 45%; 
+                order: 1;
+                text-align: right;
+            }
+            .timeline-item-right {
+                width: 45%;
+                order: 3;
+                text-align: right;
+            }
+            .timeline-spacer {
+                width: 50%;
+                order: 1;
+            }
+            .timeline-item-container:nth-child(odd) .timeline-card-wrapper {
+                margin-left: auto;
+            }
+            .timeline-item-container:nth-child(even) .timeline-card-wrapper {
+                margin-right: auto;
+            }
+        }
+        @media (max-width: 1023px) { 
+            .timeline-item-container {
+                position: relative;
+                padding-right: 3rem; 
+                text-align: right;
+            }
+            .timeline-item-left, .timeline-item-right {
+                width: 100%;
+                margin-top: 1.5rem; 
+            }
+             .timeline-item-container .timeline-dot {
+                 position: absolute;
+                 right: 1.125rem; 
+                 top: 0.5rem;
+                 transform: none;
+                 margin-right: 0;
+             }
+        }
+        /* ---------------------------------------------------- */
     </style>
 </head>
 <body>
@@ -371,25 +624,25 @@
                 
                 <a href="#" class="flex items-center">
                     <img src="شعار إنيوثون (light Mode).png" 
-                         alt="شعار الماراثون العلمي الطلابي - فاتح" 
-                         class="logo-light marathon-logo-base">
+                                         alt="إنيوثون - فاتح" 
+                                         class="logo-light marathon-logo-base">
 
                     <img src="شعار إنيوثون (Dark Mode).png" 
-                         alt="شعار الماراثون العلمي الطلابي - داكن" 
-                         class="logo-dark marathon-logo-base">
+                                         alt="شعار إنيوثون - داكن" 
+                                         class="logo-dark marathon-logo-base">
                     </a>
                 
             </div>
 
-            <nav id="landing-nav" class="hidden xl:flex space-x-3 space-x-reverse lg:space-x-4 text-base font-medium absolute left-1/2 transform -translate-x-1/2">
-                <a href="#tracks" onclick="internalScroll('tracks')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">المسارات</a>
-                <a href="#rewards" onclick="internalScroll('rewards')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الجوائز</a>
-                <a href="#criteria" onclick="internalScroll('criteria')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">المعايير</a>
-                <a href="#schedule" onclick="internalScroll('schedule')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">البرنامج الزمني</a>
-                <a href="#workshops" onclick="internalScroll('workshops')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">ورش العمل</a>
-                <a href="#terms" onclick="internalScroll('terms')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الشروط</a>
-                <a href="#partners" onclick="internalScroll('partners')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الشركاء</a> 
-                <a href="#faq" onclick="internalScroll('faq')" class="text-gray-600 hover:text-blue-700 transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الأسئلة الشائعة</a>
+            <nav id="landing-nav" class="hidden xl:flex space-x-3 space-x-reverse lg:space-x-4 text-base font-500 absolute left-1/2 transform -translate-x-1/2">
+                <a href="#tracks" onclick="internalScroll('tracks')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">المسارات</a>
+                <a href="#rewards" onclick="internalScroll('rewards')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الجوائز</a>
+                <a href="#criteria" onclick="internalScroll('criteria')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">المعايير</a>
+                <a href="#schedule" onclick="internalScroll('schedule')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">البرنامج الزمني</a>
+                <a href="#workshops" onclick="internalScroll('workshops')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">ورش العمل</a>
+                <a href="#terms" onclick="internalScroll('terms')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الشروط</a>
+                <a href="#partners" onclick="internalScroll('partners')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الشركاء</a> 
+                <a href="#faq" onclick="internalScroll('faq')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الأسئلة الشائعة</a>
             </nav>
             
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -404,16 +657,15 @@
                     <i data-lucide="sun" class="w-5 h-5 sun-icon"></i>
                 </button>
                 
-                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="hidden lg:block px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg shadow-blue-500/50 text-sm md:text-base dark:hover:bg-blue-600">
+                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="hidden lg:block px-5 py-2 bg-nu-secondary text-white font-semibold rounded-full hover:bg-[#056a79] transition shadow-lg shadow-nu-secondary/50 text-sm md:text-base dark:hover:bg-nu-secondary/70">
                     سجل الآن
                 </a>
                 
-                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="lg:hidden px-3 py-1.5 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition shadow-lg text-sm dark:hover:bg-blue-600">
+                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="lg:hidden px-3 py-1.5 bg-nu-secondary text-white font-semibold rounded-full hover:bg-[#056a79] transition shadow-lg text-sm dark:hover:bg-nu-secondary/70">
                     سجل الآن
                 </a>
                 
             </div>
-            
         </div>
     </header>
 
@@ -426,6 +678,10 @@
             </button>
         </div>
         
+        <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileDropdown();">
+            <span>المقدمة</span>
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
         <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileDropdown();">
             <span>المسارات</span>
             <i data-lucide="chevron-left" class="w-5 h-5"></i>
@@ -465,28 +721,42 @@
         <section id="top" class="hero-bg text-white pt-24 pb-16 md:pt-32 md:pb-24">
             <div class="container mx-auto px-4 text-center relative z-20">
                 <h2 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
-                    أطلق فكرتك الابتكارية في <span class="text-yellow-400">NUThon بجامعة نجران</span>
+                    أطلق فكرتك الابتكارية في <span class="text-nu-accent">NUThon بجامعة نجران</span>
                 </h2>
-                <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                    إنيوثون فرصة لطلاب جامعة نجران لإطلاق مشاريعهم الابتكارية في مجالات المستقبل الواعدة
+                <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-5xl mx-auto">
+                    إنيوثون فرصة لطلبة جامعة نجران لإطلاق مشاريعهم الابتكارية في مجالات المستقبل الواعدة
                 </p>
-                
-                <div id="countdown" class="flex justify-center space-x-4 space-x-reverse mb-6 text-center">
-                    </div>
-                <p id="countdown-status" class="text-lg font-medium text-emerald-400 mb-10">
+                <div class="flex flex-col justify-center items-center gap-4 w-full">
+                <div class="flex flex-row justify-between items-center w-full px-4">
+        
+                <p class="text-xl md:text-2xl text-gray-300 mb-8 w-8/12 text-right">
+                    ابتكار حلول ومبادرات نوعية تسهم في تطوير الخدمات الجامعية والمجتمعية في عدة مجالات، بما يعزز جودة الحياة الجامعية ويواكب مستهدفات رؤية المملكة 2030 ويهدف
+                    هذا التحدي إلى الجمع بين المسارات الثالثة في إطار تكاملي واحد، بحيث يعمل المشاركون من
+                    مختلف التخصصات على تطوير حلول مترابطة تُبرز أثر التعاون بين المجالات الصحية، والتقنية،
+                    والإنسانية لخدمة الجامعة والمجتمع.
+                </p>
+
+            <div class="flex flex-col items-center">
+                <div id="countdown" class="flex justify-center space-x-4 space-x-reverse mb-2 text-center">
+                </div>
+                <p id="countdown-status" class="text-lg font-500 text-nu-accent mb-10">
                     متبقي على بدء التسجيل
                 </p>
 
+                
+            </div>
+            </div>
+                </div>
                 <div class="flex flex-col md:flex-row justify-center items-center gap-4">
-                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse px-10 py-4 bg-emerald-400 text-gray-900 text-xl font-bold rounded-xl hover:bg-emerald-500 transition duration-300 transform hover:scale-105 shadow-xl shadow-emerald-400/70">
-                    <span>سجل لتقديم مشروعك الابتكاري</span>
-                    <i data-lucide="arrow-left" class="w-6 h-6"></i>
-                </a>
+                    <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=FWtNse63V0m7FLYQoZOkEBxTTWEyxtFLt5CN3QkrNQlUNUJKOUZQMEg3V0JFVU9ZOU1JVjM3SVdHUC4u" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse px-10 py-4 bg-nu-accent text-gray-900 text-xl font-bold rounded-xl hover:bg-nu-accent/90 transition duration-300 transform hover:scale-105 shadow-xl shadow-nu-accent/70">
+                        <span>سجل لتقديم مشروعك الابتكاري</span>
+                        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                    </a>
 
-                <a href="دليل المشاركة.pdf" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse px-8 py-4 bg-blue-700 text-white text-xl font-bold rounded-xl hover:bg-blue-800 transition duration-300 transform hover:scale-105 shadow-xl shadow-blue-500/70">
-                    <span>دليل الهاكاثون</span>
-                    <i data-lucide="external-link" class="w-6 h-6"></i>
-                </a>
+                    <a href="دليل المشاركة.pdf" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse px-8 py-4 bg-nu-secondary text-white text-xl font-bold rounded-xl hover:bg-[#056a79] transition duration-300 transform hover:scale-105 shadow-xl shadow-nu-secondary/70">
+                        <span>دليل الهاكاثون</span>
+                        <i data-lucide="external-link" class="w-6 h-6"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -506,16 +776,16 @@
                         <p class="text-gray-600 text-lg dark:text-gray-400">المشاريع الابتكارية المتعلقة بتحسين الرعاية الصحية، التشخيص، والعلاج باستخدام أحدث المناهج.</p>
                     </div>
                     
-                    <div class="bg-gray-50 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 border-b-8 border-blue-600/70 transform hover:translate-y-[-5px] dark:bg-slate-800 dark:border-blue-500">
-                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 shadow-inner dark:bg-blue-900/50 dark:text-blue-400">
+                    <div class="bg-gray-50 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 border-b-8 border-nu-secondary/70 transform hover:translate-y-[-5px] dark:bg-slate-800 dark:border-nu-secondary">
+                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-nu-secondary/10 text-nu-secondary mb-4 shadow-inner dark:bg-nu-secondary/30 dark:text-nu-secondary/80">
                             <i data-lucide="cog" class="w-8 h-8"></i>
                         </div>
                         <h4 class="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">المسار الهندسي والتقني</h4>
                         <p class="text-gray-600 text-lg dark:text-gray-400">المشاريع الابتكارية في الذكاء الاصطناعي، الأمن السيبراني، الهندسة، الأنظمة المستدامة، وحلول البنية التحتية.</p>
                     </div>
 
-                    <div class="bg-gray-50 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 border-b-8 border-green-600/70 transform hover:translate-y-[-5px] dark:bg-slate-800 dark:border-green-500">
-                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4 shadow-inner dark:bg-green-900/50 dark:text-green-400">
+                    <div class="bg-gray-50 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 border-b-8 border-nu-accent/70 transform hover:translate-y-[-5px] dark:bg-slate-800 dark:border-nu-accent">
+                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-nu-accent/10 text-nu-accent mb-4 shadow-inner dark:bg-nu-accent/30 dark:text-nu-accent/80">
                             <i data-lucide="book-open-text" class="w-8 h-8"></i>
                         </div>
                         <h4 class="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">المسار الإنساني والعلمي</h4>
@@ -544,27 +814,27 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center items-end">
                     
-                    <div class="reward-1st reward-card bg-white p-6 rounded-2xl shadow-2xl transition duration-300 border-4 border-yellow-500 relative z-10 dark:bg-slate-800 dark:border-yellow-500">
-                        <i data-lucide="trophy" class="w-20 h-20 text-yellow-500 mx-auto mb-4 fill-yellow-500 stroke-2"></i>
+                    <div class="reward-1st reward-card bg-white p-6 rounded-2xl shadow-2xl transition duration-300 border-4 border-nu-accent relative z-10 dark:bg-slate-800 dark:border-nu-accent">
+                        <i data-lucide="trophy" class="w-20 h-20 text-nu-accent mx-auto mb-4 fill-nu-accent/50 stroke-2"></i>
                         <div>
                             <h4 class="text-3xl font-extrabold text-gray-900 mb-2 dark:text-gray-100">المركز الأول</h4>
-                            <span class="text-4xl font-mono text-yellow-600 dark:text-yellow-500">SAR 5000</span>
+                            <span class="text-4xl font-mono text-nu-accent/90 dark:text-nu-accent">SAR 5000</span>
                         </div>
                     </div>
 
-                    <div class="reward-2nd reward-card bg-white p-6 rounded-2xl shadow-xl transition duration-300 border-2 border-gray-400 dark:bg-slate-800 dark:border-gray-500">
-                        <i data-lucide="trophy" class="w-16 h-16 text-gray-500 mx-auto mb-4 fill-gray-400 stroke-2"></i>
+                    <div class="reward-2nd reward-card bg-white p-6 rounded-2xl shadow-xl transition duration-300 border-2 border-nu-purple/70 dark:bg-slate-800 dark:border-nu-purple/50">
+                        <i data-lucide="trophy" class="w-16 h-16 text-nu-purple/80 mx-auto mb-4 fill-nu-purple/40 stroke-2"></i>
                         <div>
                             <h4 class="text-3xl font-extrabold text-gray-900 mb-2 dark:text-gray-100">المركز الثاني</h4>
-                            <span class="text-4xl font-mono text-gray-600 dark:text-gray-400">SAR 3000</span>
+                            <span class="text-4xl font-mono text-nu-purple dark:text-nu-purple/70">SAR 3000</span>
                         </div>
                     </div>
                     
-                    <div class="reward-3rd reward-card bg-white p-6 rounded-2xl shadow-xl transition duration-300 border-2 border-orange-500 dark:bg-slate-800 dark:border-orange-500">
-                        <i data-lucide="trophy" class="w-16 h-16 text-orange-600 mx-auto mb-4 fill-orange-500 stroke-2"></i>
+                    <div class="reward-3rd reward-card bg-white p-6 rounded-2xl shadow-xl transition duration-300 border-2 border-nu-secondary/70 dark:bg-slate-800 dark:border-nu-secondary/50">
+                        <i data-lucide="trophy" class="w-16 h-16 text-nu-secondary mx-auto mb-4 fill-nu-secondary/50 stroke-2"></i>
                         <div>
                             <h4 class="text-3xl font-extrabold text-gray-900 mb-2 dark:text-gray-100">المركز الثالث</h4>
-                            <span class="text-4xl font-mono text-orange-600 dark:text-orange-500">SAR 2000</span>
+                            <span class="text-4xl font-mono text-nu-secondary dark:text-nu-secondary/80">SAR 2000</span>
                         </div>
                     </div>
 
@@ -579,32 +849,32 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
-                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg border-r-4 border-emerald-400 flex items-start space-x-4 space-x-reverse dark:bg-slate-800 dark:border-emerald-600">
-                        <i data-lucide="feather" class="w-8 h-8 text-emerald-600 dark:text-emerald-500 mt-1 flex-shrink-0"></i>
+                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg border-r-4 border-nu-accent flex items-start space-x-4 space-x-reverse dark:bg-slate-800 dark:border-nu-accent">
+                        <i data-lucide="feather" class="w-8 h-8 text-nu-accent dark:text-nu-accent/80 mt-1 flex-shrink-0"></i>
                         <div>
                             <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">الأصالة والإبداع</h4>
                             <p class="text-gray-600 dark:text-gray-400">مدى حداثة الفكرة، وابتكار المنهجية المتبعة، والمساهمة في إثراء المعرفة وإضافة جديد في المجال.</p>
                         </div>
                     </div>
 
-                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg border-r-4 border-emerald-400 flex items-start space-x-4 space-x-reverse dark:bg-slate-800 dark:border-emerald-600">
-                        <i data-lucide="scan" class="w-8 h-8 text-emerald-600 dark:text-emerald-500 mt-1 flex-shrink-0"></i>
+                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg border-r-4 border-nu-accent flex items-start space-x-4 space-x-reverse dark:bg-slate-800 dark:border-nu-accent">
+                        <i data-lucide="scan" class="w-8 h-8 text-nu-accent dark:text-nu-accent/80 mt-1 flex-shrink-0"></i>
                         <div>
                             <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">المنهجية العلمية والتقنية</h4>
                             <p class="text-gray-600 dark:text-gray-400">سلامة الإطار العلمي /الهندسي /التقني المستخدم، ودقة التحليل والمنهجية المتبعة في تنفيذ المشروع.</p>
                         </div>
                     </div>
 
-                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg border-r-4 border-emerald-400 flex items-start space-x-4 space-x-reverse dark:bg-slate-800 dark:border-emerald-600">
-                        <i data-lucide="trending-up" class="w-8 h-8 text-emerald-600 dark:text-emerald-500 mt-1 flex-shrink-0"></i>
+                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg border-r-4 border-nu-accent flex items-start space-x-4 space-x-reverse dark:bg-slate-800 dark:border-nu-accent">
+                        <i data-lucide="trending-up" class="w-8 h-8 text-nu-accent dark:text-nu-accent/80 mt-1 flex-shrink-0"></i>
                         <div>
                             <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">التأثير والجدوى</h4>
                             <p class="text-gray-600 dark:text-gray-400">مدى الأهمية التطبيقية أو الاجتماعية للمشروع، ومساهمته في معالجة مشكلة حقيقية أو تقديم حل فعّال.</p>
                         </div>
                     </div>
 
-                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg border-r-4 border-emerald-400 flex items-start space-x-4 space-x-reverse dark:bg-slate-800 dark:border-emerald-600">
-                        <i data-lucide="layout-dashboard" class="w-8 h-8 text-emerald-600 dark:text-emerald-500 mt-1 flex-shrink-0"></i>
+                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg border-r-4 border-nu-accent flex items-start space-x-4 space-x-reverse dark:bg-slate-800 dark:border-nu-accent">
+                        <i data-lucide="layout-dashboard" class="w-8 h-8 text-nu-accent dark:text-nu-accent/80 mt-1 flex-shrink-0"></i>
                         <div>
                             <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">العرض والتوثيق</h4>
                             <p class="text-gray-600 dark:text-gray-400">جودة كتابة المشروع وسلامة اللغة، والالتزام بقواعد التوثيق الفني المعتمدة.</p>
@@ -616,96 +886,91 @@
         </section>
 
         <section id="schedule" class="py-16 md:py-24 relative z-10">
-            <div class="container mx-auto px-4 max-w-5xl">
-                <h3 class="text-4xl font-bold text-center text-gray-900 mb-12 dark:text-white">البرنامج الزمني للهاكاثون</h3>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    
-                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-emerald-400 dark:bg-slate-800 dark:border-emerald-600">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                            <i data-lucide="activity" class="w-6 h-6 text-emerald-600 dark:text-emerald-500 flex-shrink-0"></i>
-                            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">المرحلة الأولى</h4>
-                        </div>
-                        <h5 class="text-lg font-bold text-blue-700 mb-2 dark:text-blue-400">الورش التعريفية والدعم</h5>
-                        <p class="text-gray-700 text-sm dark:text-gray-300">من <strong>18 نوفمبر</strong> إلى <strong>30 ديسمبر 2025</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">بداية الورش التدريبية والإشراف على الفرق أثناء إعداد المشاريع الابتكارية.</p>
-                    </div>
+            <div class="container mx-auto px-4 max-w-6xl">
+                <header class="text-center mb-16">
+                <h3 class="text-4xl font-bold text-gray-900 mb-4 dark:text-white">البرنامج الزمني للهاكاثون</h3>
+                <p class="text-center text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    التسلسل الزمني للفعاليات والمراحل الرئيسية للهاكاثون
+                </p>
+                </header>
 
-                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-blue-500 dark:bg-slate-800 dark:border-blue-500">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                            <i data-lucide="calendar-check" class="w-6 h-6 text-blue-600 dark:text-blue-500 flex-shrink-0"></i>
-                            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">المرحلة الثانية</h4>
-                        </div>
-                        <h5 class="text-lg font-bold text-blue-700 mb-2 dark:text-blue-400">فتح التسجيل</h5>
-                        <p class="text-gray-700 text-sm dark:text-gray-300"><strong>30 ديسمبر 2025</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">إتاحة رابط التسجيل للفرق وبدء استقبال المشاريع الابتكارية.</p>
-                    </div>
+                <div class="relative">
+                <div class="timeline-line"></div>
 
-                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-red-500 dark:bg-slate-800 dark:border-red-500">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                            <i data-lucide="calendar-x" class="w-6 h-6 text-red-600 dark:text-red-500 flex-shrink-0"></i>
-                            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">المرحلة الثالثة</h4>
-                        </div>
-                        <h5 class="text-lg font-bold text-blue-700 mb-2 dark:text-blue-400">إغلاق التسجيل</h5>
-                        <p class="text-gray-700 text-sm dark:text-gray-300"><strong>10 يناير 2026</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">إغلاق رابط التسجيل والتوقف عن استقبال المشاريع الابتكارية.</p>
-                    </div>
+                <div class="flex flex-col space-y-16 lg:space-y-20">
 
-                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-indigo-500 dark:bg-slate-800 dark:border-indigo-500">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                            <i data-lucide="mail-check" class="w-6 h-6 text-indigo-600 dark:text-indigo-500 flex-shrink-0"></i>
-                            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">المرحلة الخامسة</h4>
-                        </div>
-                        <h5 class="text-lg font-bold text-blue-700 mb-2 dark:text-blue-400">إرسال القبول الرسمي</h5>
-                        <p class="text-gray-700 text-sm dark:text-gray-300"><strong>11 يناير 2026</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">إرسال إشعارات القبول الرسمية للفرق المتأهلة.</p>
+                <div class="timeline-item-container flex items-center">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card-wrapper lg:w-5/12 timeline-item-left">
+                        <p class="timeline-number">01</p>
+                        <h3 class="timeline-title">المرحلة الأولى: الورش التعريفية والدعم</h3>
+                        <p class="timeline-date" dir="rtl">من 18 نوفمبر إلى 30 ديسمبر 2025</p>
+                        <p class="timeline-description">بداية الورش التدريبية والإشراف على الفرق أثناء إعداد المشاريع الابتكارية.</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="timeline-item-container flex items-center">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card-wrapper lg:w-5/12 timeline-item-right">
+                        <p class="timeline-number">02</p>
+                        <h3 class="timeline-title">المرحلة الثانية: فتح التسجيل</h3>
+                        <p class="timeline-date" dir="rtl">30 ديسمبر 2025</p>
+                        <p class="timeline-description">إتاحة رابط التسجيل للفرق بحدود استغلال المشاريع الابتكارية.</p>
+                    </div>
+                </div>
 
-                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-red-500 dark:bg-slate-800 dark:border-red-500">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                            <i data-lucide="trophy" class="w-6 h-6 text-red-600 dark:text-red-500 flex-shrink-0"></i>
-                            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">المرحلة السادسة</h4>
-                        </div>
-                        <h5 class="text-lg font-bold text-blue-700 mb-2 dark:text-blue-400">اليوم الأول الحضوري</h5>
-                        <p class="text-gray-700 text-sm dark:text-gray-300"><strong>25 يناير 2026</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">اليوم الأول للحدث الحضوري والفعاليات.</p>
+                <div class="timeline-item-container flex items-center">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card-wrapper lg:w-5/12 timeline-item-left">
+                        <p class="timeline-number">03</p>
+                        <h3 class="timeline-title">المرحلة الثالثة: إغلاق التسجيل</h3>
+                        <p class="timeline-date" dir="rtl">10 يناير 2026</p>
+                        <p class="timeline-description">إغلاق رابط التسجيل والتوقف عن استقبال المشاريع الابتكارية.</p>
                     </div>
-                    
-                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-red-500 dark:bg-slate-800 dark:border-red-500">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                            <i data-lucide="trophy" class="w-6 h-6 text-red-600 dark:text-red-500 flex-shrink-0"></i>
-                            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">المرحلة السابعة</h4>
-                        </div>
-                        <h5 class="text-lg font-bold text-blue-700 mb-2 dark:text-blue-400">اليوم الثاني الحضوري</h5>
-                        <p class="text-gray-700 text-sm dark:text-gray-300"><strong>26 يناير 2026</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">اليوم الثاني للحدث الحضوري وفعاليات.</p>
+                </div>
+                
+                <div class="timeline-item-container flex items-center">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card-wrapper lg:w-5/12 timeline-item-left">
+                        <p class="timeline-number">04</p>
+                        <h3 class="timeline-title">المرحلة الرابعة: إرسال القبول الرسمي</h3>
+                        <p class="timeline-date" dir="ltr">11 يناير 2026</p>
+                        <p class="timeline-description">إرسال إشعارات القبول الرسمية للفرق المتأهلة.</p>
                     </div>
-                    
-                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-red-500 dark:bg-slate-800 dark:border-red-500">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                            <i data-lucide="trophy" class="w-6 h-6 text-red-600 dark:text-red-500 flex-shrink-0"></i>
-                            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">المرحلة الثامنة</h4>
-                        </div>
-                        <h5 class="text-lg font-bold text-blue-700 mb-2 dark:text-blue-400">التحكيم النهائي</h5>
-                        <p class="text-gray-700 text-sm dark:text-gray-300"><strong>27 يناير 2026</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">التحكيم النهائي لجميع الفرق المتأهلة.</p>
-                    </div>
+                </div>
 
-                    <div class="schedule-card bg-gray-50 p-6 rounded-xl shadow-lg border-b-4 border-emerald-400 dark:bg-slate-800 dark:border-emerald-600">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                            <i data-lucide="party-popper" class="w-6 h-6 text-emerald-600 dark:text-emerald-500 flex-shrink-0"></i>
-                            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">المرحلة التاسعة</h4>
-                        </div>
-                        <h5 class="text-lg font-bold text-blue-700 mb-2 dark:text-blue-400">الحفل الختامي</h5>
-                        <p class="text-gray-700 text-sm dark:text-gray-300"><strong>01 فبراير 2026</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">الحفل الختامي للهاكاثون وإعلان النتائج النهائية وتوزيع الجوائز.</p>
+                <div class="timeline-item-container flex items-center">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card-wrapper lg:w-5/12 timeline-item-right">
+                        <p class="timeline-number">05</p>
+                        <h3 class="timeline-title">المرحلة الخامسة: الأيام الحضورية</h3>
+                        <p class="timeline-date" dir="ltr">26-25 يناير 2026</p>
+                        <p class="timeline-description"> حضور للهاكاثون وورش التدريبية والاستشارية.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item-container flex items-center">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card-wrapper lg:w-5/12 timeline-item-right">
+                        <p class="timeline-number">06</p>
+                        <h3 class="timeline-title">المرحلة السادسة: التحكيم النهائي</h3>
+                        <p class="timeline-date" dir="ltr">27 يناير 2026</p>
+                        <p class="timeline-description">التحكيم النهائي لجميع الفرق المتأهلة.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item-container flex items-center" style="margin-bottom: 0;">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card-wrapper lg:w-5/12 timeline-item-left">
+                        <p class="timeline-number">07</p>
+                        <h3 class="timeline-title">المرحلة السابعة: الحفل الختامي</h3>
+                        <p class="timeline-date" dir="ltr">01 فبراير 2026</p>
+                        <p class="timeline-description">الحفل الختامي للهاكاثون وإعلان النتائج النهائية وتوزيع الجوائز.</p>
                     </div>
                 </div>
 
             </div>
+        </div>
         </section>
 
         <section id="workshops" class="py-16 md:py-24 relative z-10">
@@ -715,8 +980,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     
-                    <div id="workshop-1" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="rocket" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-1" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="rocket" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">رحلة الإبداع في NUThon</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>أ. فيصل الجوتر</strong> (عام وشامل)</p>
                         <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-red-600 dark:text-red-400">عن بعد (افتراضية)</strong></p>
@@ -725,8 +990,8 @@
                         <div data-workshop-status="pending" data-workshop-link="https://eu.bbcollab.com/guest/4448618b96d04d959f9a7661e314f606" data-workshop-id="1"></div>
                     </div>
 
-                    <div id="workshop-2" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="eye" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-2" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="eye" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">قدّمها كما تراها</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>المبتكر: الحسن رزق آل قارح</strong> (عام وشامل)</p>
                         <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-red-600 dark:text-red-400">عن بعد (افتراضية)</strong></p>
@@ -735,8 +1000,8 @@
                         <div data-workshop-status="pending" data-workshop-link="https://eu.bbcollab.com/guest/46e411a5ae1446caa671612126ee2cbe" data-workshop-id="2"></div>
                     </div>
 
-                    <div id="workshop-3" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="shield-check" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-3" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="shield-check" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">مقدمة عن حقوق المؤلف</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>أ. عبدالعزيز الفايز</strong> (هيئة السعودية للملكية الفكرية)</p>
                         <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-red-600 dark:text-red-400">عن بعد (افتراضية)</strong></p>
@@ -745,9 +1010,9 @@
                         <div data-workshop-status="pending" data-workshop-link="https://eu.bbcollab.com/guest/ca8c47ee9e044270be2cbaae63d9f995" data-workshop-id="3"></div>
                     </div>
 
-                    <div id="workshop-4" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="palette" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
-                        <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">مقدمة عن التصاميم في سوق العمل  السعوي</h4>
+                    <div id="workshop-4" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="palette" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
+                        <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">مقدمة عن التصاميم في سوق العمل السعودي</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>أ. خالد العريج</strong> (هيئة السعودية للملكيةالفكرية)</p>
                         <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-red-600 dark:text-red-400">عن بعد (افتراضية)</strong></p>
                         <p class="text-sm text-gray-700 font-medium dark:text-gray-300">التاريخ والوقت: <strong>26 نوفمبر 2025 | 1:00م</strong></p>
@@ -755,8 +1020,8 @@
                         <div data-workshop-status="pending" data-workshop-link="https://eu.bbcollab.com/guest/fce28cd9c5194e83a149f82cf3d91cfa" data-workshop-id="4"></div>
                     </div>
 
-                    <div id="workshop-5" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="users-round" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-5" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="users-round" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">من الفكرة إلى المشروع: إدارة الفرق البحثية والابتكارية</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>د. ناصر الهمامي</strong> (دكتوراة في الإدارة العامة الحديثة)</p>
                         <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-red-600 dark:text-red-400">عن بعد (افتراضية)</strong></p>
@@ -765,8 +1030,8 @@
                         <div data-workshop-status="pending" data-workshop-link="https://eu.bbcollab.com/guest/f656f53a8fd442ffae00e78f25098e32" data-workshop-id="5"></div>
                     </div>
                     
-                    <div id="workshop-6" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="lightbulb" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-6" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="lightbulb" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">مسار الابتكار: من الأفكار الإبداعية إلى الابتكار التطبيقي</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>د. حسين آل عماد</strong> (زمالة الابتكار وتطوير النظم الصحية)</p>
                         <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-red-600 dark:text-red-400">عن بعد (افتراضية)</strong></p>
@@ -775,41 +1040,41 @@
                         <div data-workshop-status="pending" data-workshop-link="https://eu.bbcollab.com/guest/4409217f7e6a4759a46b55e0f5763614" data-workshop-id="6"></div>
                     </div>
 
-                    <div id="workshop-7" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="cog" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-7" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="cog" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">استخدام التقنيات الحديثة في الهندسة</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>د. عبدالله خلوفة</strong> (دكتوراة في الهندسة الكهربائية)</p>
                         <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-red-600 dark:text-red-400">عن بعد (افتراضية)</strong></p>
                         <p class="text-sm text-gray-700 font-medium dark:text-gray-300">التاريخ والوقت: <strong>15 ديسمبر 2025 | 6:00م</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">المحاور: تسعى لتعريف المشاركين بأحدث التقنيات الرقمية في الهندسة وتنمية مهارات اختيار التقنية المناسبة وتطبيق الحلول المبتكرة عمليًا.</p>
-                        <div data-workshop-status="pending" data-workshop-link="https://eu.bbcollab.com/guest/c1393206994f410389081555e48dd214" data-workshop-id="6"></div>
+                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">المحاور: تسعى لتعريف المشاركين بأحدث التقنيات الرقمية في الهندسة وتنمية مهارات اختيار التقنية المناسبة وتطبيق الحلول المبتكرة عمليًا.</p>
+                        <div data-workshop-status="pending" data-workshop-link="https://eu.bbcollab.com/guest/c1393206994f410389081555e48dd214" data-workshop-id="7"></div>
                     </div>
 
-                    <div id="workshop-8" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="search" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-8" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="search" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">كيف تجد فكرتك الريادية؟</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>أكاديمية منشآت</strong></p>
-                        <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-emerald-600 dark:text-emerald-400">حضوري (تحدد لاحقًا - مكتبة الأمير مشعل بن عبدالله)</strong></p>
-                        <p class="text-sm text-gray-700 font-medium dark:text-gray-300">التاريخ والوقت: <strong>21 يناير 2026 | 2:00م</strong></p>
+                        <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-nu-accent dark:text-nu-accent/80">حضوري (تحدد لاحقًا - مكتبة الأمير مشعل بن عبدالله)</strong></p>
+                        <p class="text-sm text-gray-700 font-medium dark:text-gray-300">التاريخ والوقت: <strong>25 يناير 2026 | 2:00م</strong></p>
                         <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">المحاور: تسعى الورشة إلى تمكين المشاركين من اكتشاف أفكار ريادية مبتكرة، وتحفيزهم على تحليل المشكلات واستلهام الحلول القابلة للتطبيق في السوق.</p>
                     </div>
 
-                    <div id="workshop-9" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="trending-up" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-9" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="trending-up" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">نموذج العمل التجاري (1)</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>أكاديمية منشآت</strong></p>
-                        <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-emerald-600 dark:text-emerald-400">حضوري (تحدد لاحقًا - مكتبة الأمير مشعل بن عبدالله)</strong></p>
-                        <p class="text-sm text-gray-700 font-medium dark:text-gray-300">التاريخ والوقت: <strong>21 يناير 2026 | 2:00م</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">المحاور: تهدف الورشتان إلى تعريف المشاركين بعناصر نموذج العمل التجاري، وتطوير مهاراتهم في تصميم نموذج متكامل وتحليل الجدوى لتحويل الأفكار إلى مشاريع ريادية قابلة للنمو.</p>
+                        <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-nu-accent dark:text-nu-accent/80">حضوري (تحدد لاحقًا - مكتبة الأمير مشعل بن عبدالله)</strong></p>
+                        <p class="text-sm text-gray-700 font-medium dark:text-gray-300">التاريخ والوقت: <strong>26 يناير 2026 | 2:00م</strong></p>
+                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">المحاور: تهدف الورشتان إلى تعريف المشاركين بعناصر نموذج العمل التجاري، وتطوير مهاراتهم في تصميم نموذج متكامل وتحليل الجدوى لتحويل الأفكار إلى مشاريع ريادية قابلة للنمو.</p>
                     </div>
 
-                    <div id="workshop-10" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition dark:bg-slate-800 dark:border-purple-600">
-                        <i data-lucide="bar-chart-3" class="w-8 h-8 text-purple-600 dark:text-purple-500 mb-3"></i>
+                    <div id="workshop-10" class="p-6 bg-white rounded-xl shadow-lg border-l-4 border-nu-purple hover:shadow-xl transition dark:bg-slate-800 dark:border-nu-purple/70">
+                        <i data-lucide="bar-chart-3" class="w-8 h-8 text-nu-purple dark:text-nu-purple/80 mb-3"></i>
                         <h4 class="text-xl font-bold text-gray-900 mb-1 dark:text-gray-100">نموذج العمل التجاري (2)</h4>
                         <p class="text-gray-600 text-base font-semibold dark:text-gray-400">يقدمها: <strong>أكاديمية منشآت</strong></p>
-                        <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-emerald-600 dark:text-emerald-400">حضوري (تحدد لاحقًا - مكتبة الأمير مشعل بن عبدالله)</strong></p>
-                        <p class="text-sm text-gray-700 font-medium dark:text-gray-300">التاريخ والوقت: <strong>21 يناير 2026 | 2:00م</strong></p>
-                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">المحاور: تهدف الورشتان إلى تعريف المشاركين بعناصر نموذج العمل التجاري، وتطوير مهاراتهم في تصميم نموذج متكامل وتحليل الجدوى لتحويل الأفكار إلى مشاريع ريادية قابلة للنمو.</p>
+                        <p class="text-sm text-gray-700 mt-1 font-medium dark:text-gray-300">المكان: <strong class="text-nu-accent dark:text-nu-accent/80">حضوري (تحدد لاحقًا - مكتبة الأمير مشعل بن عبدالله)</strong></p>
+                        <p class="text-sm text-gray-700 font-medium dark:text-gray-300">التاريخ والوقت: <strong>27 يناير 2026 | 2:00م</strong></p>
+                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-500">المحاور: تهدف الورشتان إلى تعريف المشاركين بعناصر نموذج العمل التجاري، وتطوير مهاراتهم في تصميم نموذج متكامل وتحليل الجدوى لتحويل الأفكار إلى مشاريع ريادية قابلة للنمو.</p>
                     </div>
 
                 </div>
@@ -822,57 +1087,57 @@
 
                 <div class="space-y-6 text-lg text-gray-700 dark:text-gray-300">
                     
-                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-blue-700 dark:bg-slate-800 dark:border-blue-500">
-                        <h4 class="font-bold text-xl text-blue-700 mb-2 flex items-center space-x-2 space-x-reverse dark:text-blue-400">
-                            <i data-lucide="clock-4" class="w-6 h-6 text-blue-500"></i>
+                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-nu-secondary dark:bg-slate-800 dark:border-nu-purple">
+                        <h4 class="font-bold text-xl text-nu-secondary mb-2 flex items-center space-x-2 space-x-reverse dark:text-nu-purple">
+                            <i data-lucide="clock-4" class="w-6 h-6 text-nu-secondary dark:text-nu-purple"></i>
                             <span>التفرغ والالتزام بالوقت</span>
                         </h4>
                         <p>يشترط على جميع المشاركين الالتزام الكامل بالتفرغ خلال فترة تنفيذ الهاكاثون لضمان الاستفادة القصوى من البرنامج وتحقيق الأهداف المرجوة.</p>
                     </div>
 
-                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-blue-700 dark:bg-slate-800 dark:border-blue-500">
-                        <h4 class="font-bold text-xl text-blue-700 mb-2 flex items-center space-x-2 space-x-reverse dark:text-blue-400">
-                            <i data-lucide="graduation-cap" class="w-6 h-6 text-blue-500"></i>
+                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-nu-secondary dark:bg-slate-800 dark:border-nu-purple">
+                        <h4 class="font-bold text-xl text-nu-secondary mb-2 flex items-center space-x-2 space-x-reverse dark:text-nu-purple">
+                            <i data-lucide="graduation-cap" class="w-6 h-6 text-nu-secondary dark:text-nu-purple"></i>
                             <span>أهلية المشاركة</span>
                         </h4>
                         <p>يُسمح فقط بمشاركة طلاب / طالبات البكالوريوس بجامعة نجران.</p>
                     </div>
 
-                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-blue-700 dark:bg-slate-800 dark:border-blue-500">
-                        <h4 class="font-bold text-xl text-blue-700 mb-2 flex items-center space-x-2 space-x-reverse dark:text-blue-400">
-                            <i data-lucide="users" class="w-6 h-6 text-blue-500"></i>
+                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-nu-secondary dark:bg-slate-800 dark:border-nu-purple">
+                        <h4 class="font-bold text-xl text-nu-secondary mb-2 flex items-center space-x-2 space-x-reverse dark:text-nu-purple">
+                            <i data-lucide="users" class="w-6 h-6 text-nu-secondary dark:text-nu-purple"></i>
                             <span>تشكيل الفريق والتسجيل الفردي</span>
                         </h4>
                         <p>يشترط تشكيل فريق مكون من 3 إلى 5 أشخاص فقط (لا يزيد أو يقل عن ذلك)، ويشمل هذا العدد قائد الفريق. لا يُسمح بالتسجيل الفردي.</p>
                     </div>
 
-                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-blue-700 dark:bg-slate-800 dark:border-blue-500">
-                        <h4 class="font-bold text-xl text-blue-700 mb-2 flex items-center space-x-2 space-x-reverse dark:text-blue-400">
-                            <i data-lucide="clipboard-list" class="w-6 h-6 text-blue-500"></i>
+                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-nu-secondary dark:bg-slate-800 dark:border-nu-purple">
+                        <h4 class="font-bold text-xl text-nu-secondary mb-2 flex items-center space-x-2 space-x-reverse dark:text-nu-purple">
+                            <i data-lucide="clipboard-list" class="w-6 h-6 text-nu-secondary dark:text-nu-purple"></i>
                             <span>مسؤولية البيانات وصحتها</span>
                         </h4>
                         <p>يكون قائد الفريق مسؤولًا عن تقديم بيانات الفريق عبر رابط التسجيل الخاص الهاكاثون. يُقرّ المشاركون بصحة كافة البيانات المقدمة، ويحق للجهة المسؤولة استبعاد أي مشارك أو فريق في حال ثبوت تقديم معلومات مضللة.</p>
                     </div>
 
-                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-blue-700 dark:bg-slate-800 dark:border-blue-500">
-                        <h4 class="font-bold text-xl text-blue-700 mb-2 flex items-center space-x-2 space-x-reverse dark:text-blue-400">
-                            <i data-lucide="lightbulb" class="w-6 h-6 text-blue-500"></i>
+                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-nu-secondary dark:bg-slate-800 dark:border-nu-purple">
+                        <h4 class="font-bold text-xl text-nu-secondary mb-2 flex items-center space-x-2 space-x-reverse dark:text-nu-purple">
+                            <i data-lucide="lightbulb" class="w-6 h-6 text-nu-secondary dark:text-nu-purple"></i>
                             <span>أصالة الأفكار والمشاريع</span>
                         </h4>
                         <p>يجب أن تكون المشاريع المقدمة أصلية ومبتكرة، ومتوافقة مع أهداف الهاكاثون ومساراته المحددة. الأفكار غير الأصلية سيتم استبعادها مباشرةً.</p>
                     </div>
 
-                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-blue-700 dark:bg-slate-800 dark:border-blue-500">
-                        <h4 class="font-bold text-xl text-blue-700 mb-2 flex items-center space-x-2 space-x-reverse dark:text-blue-400">
-                            <i data-lucide="gauge" class="w-6 h-6 text-blue-500"></i>
+                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-nu-secondary dark:bg-slate-800 dark:border-nu-purple">
+                        <h4 class="font-bold text-xl text-nu-secondary mb-2 flex items-center space-x-2 space-x-reverse dark:text-nu-purple">
+                            <i data-lucide="gauge" class="w-6 h-6 text-nu-secondary dark:text-nu-purple"></i>
                             <span>التقييم والترشيح</span>
                         </h4>
                         <p>يتم تقييم الأفكار وفق معايير محددة ومعلنة. يتم ترشيح الفرق بناءً على النتائج التي تحققها في هذا التقييم، وتعتبر قرارات لجنة التحكيم نهائية.</p>
                     </div>
 
-                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-blue-700 dark:bg-slate-800 dark:border-blue-500">
-                        <h4 class="font-bold text-xl text-blue-700 mb-2 flex items-center space-x-2 space-x-reverse dark:text-blue-400">
-                            <i data-lucide="camera" class="w-6 h-6 text-blue-500"></i>
+                    <div class="p-6 bg-white rounded-xl shadow-lg border-r-4 border-nu-secondary dark:bg-slate-800 dark:border-nu-purple">
+                        <h4 class="font-bold text-xl text-nu-secondary mb-2 flex items-center space-x-2 space-x-reverse dark:text-nu-purple">
+                            <i data-lucide="camera" class="w-6 h-6 text-nu-secondary dark:text-nu-purple"></i>
                             <span>حقوق التصوير والمواد الإعلامية</span>
                         </h4>
                         <p>يُقرّ المشاركون بموافقتهم الكاملة على التقاط الصور وتسجيل الفيديو خلال جميع مراحل الهاكاثون، بما في ذلك الفعاليات الافتراضية والحضورية والأنشطة المصاحبة، لأغراض التوثيق والترويج.</p>
@@ -889,10 +1154,10 @@
                 <div class="mb-12 border-b pb-8 dark:border-gray-700">
                     <h4 class="text-2xl font-bold text-blue-700 mb-6 dark:text-blue-400">الشريك الاستراتيجي</h4>
                     <div class="flex justify-center items-center">
-                        <div class="partner-logo-container strategic-partner-logo max-w-[15rem] flex items-center justify-center flex-col">
+                        <div class="partner-logo-container p-4 bg-gray-50 rounded-xl shadow-lg max-w-[12rem] flex items-center justify-center flex-col border-4 border-nu-accent transition hover:shadow-2xl dark:bg-gray-100 dark:border-nu-purple">
                             <img src="عمادة شؤون الطلاب.png" alt="شعار عمادة شؤون الطلاب" class="w-auto max-h-32">
                         </div>
-                    </div>
+                </div>
                 </div>
 
                 <div class="mb-8 pb-8 dark:border-gray-700">
@@ -929,7 +1194,7 @@
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
                         <button class="accordion-header flex justify-between items-center w-full p-5 text-right font-semibold text-gray-800 hover:bg-gray-50 transition duration-150 dark:text-gray-200 dark:hover:bg-slate-700" onclick="toggleAccordion(this)">
                             <span>من يمكنه التسجيل وما هي شروط الأهلية لتحدي المشاريع الابتكارية؟</span>
-                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-blue-700 dark:text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-nu-secondary dark:text-blue-500"></i>
                         </button>
                         <div class="accordion-content px-5 text-gray-600 text-lg dark:text-gray-400">
                             <p class="pb-10">يُسمح بالتسجيل في تحدي المشاريع الابتكارية لطلاب / طالبات البكالوريوس بجامعة نجران فقط. الهاكاثون يركز على تقديم مشاريع ابتكارية وليس على التنفيذ.</p>
@@ -939,7 +1204,7 @@
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
                         <button class="accordion-header flex justify-between items-center w-full p-5 text-right font-semibold text-gray-800 hover:bg-gray-50 transition duration-150 dark:text-gray-200 dark:hover:bg-slate-700" onclick="toggleAccordion(this)">
                             <span>هل يمكنني التسجيل بشكل فردي؟</span>
-                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-blue-700 dark:text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-nu-secondary dark:text-blue-500"></i>
                         </button>
                         <div class="accordion-content px-5 text-gray-600 text-lg dark:text-gray-400">
                             <p class="pb-10">لا، يجب أن يتم التسجيل كفريق بحد أدنى 3 أعضاء وبحد أقصى 5 أعضاء لتعزيز العمل الجماعي والمشاركة الفعالة.</p>
@@ -949,7 +1214,7 @@
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
                         <button class="accordion-header flex justify-between items-center w-full p-5 text-right font-semibold text-gray-800 hover:bg-gray-50 transition duration-150 dark:text-gray-200 dark:hover:bg-slate-700" onclick="toggleAccordion(this)">
                             <span>ما هي معايير تقييم الأفكار؟</span>
-                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-blue-700 dark:text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-nu-secondary dark:text-blue-500"></i>
                         </button>
                         <div class="accordion-content px-5 text-gray-600 text-lg dark:text-gray-400">
                             <p class="pb-10">تعتمد المعايير على الابتكار، الجدوى التقنية، التأثير المحتمل على المجتمع أو السوق، وأصالة الفكرة، بالإضافة إلى التزامها بمسار الهاكاثون.</p>
@@ -959,7 +1224,7 @@
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
                         <button class="accordion-header flex justify-between items-center w-full p-5 text-right font-semibold text-gray-800 hover:bg-gray-50 transition duration-150 dark:text-gray-200 dark:hover:bg-slate-700" onclick="toggleAccordion(this)">
                             <span>ماذا يحدث بعد تقديم الطلب؟</span>
-                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-blue-700 dark:text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-nu-secondary dark:text-blue-500"></i>
                         </button>
                         <div class="accordion-content px-5 text-gray-600 text-lg dark:text-gray-400">
                             <p class="pb-10">ستتلقى رسالة تأكيد عبر البريد الإلكتروني. ستقوم لجنة التحكيم بمراجعة جميع الطلبات، وسيتم إخطار الفرق المتأهلة للمرحلة التالية في غضون خمس أيام من تاريخ الإغلاق.</p>
@@ -969,7 +1234,7 @@
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
                         <button class="accordion-header flex justify-between items-center w-full p-5 text-right font-semibold text-gray-800 hover:bg-gray-50 transition duration-150 dark:text-gray-200 dark:hover:bg-slate-700" onclick="toggleAccordion(this)">
                             <span>ما هي المدة الزمنية لتنفيذ المشروع في NUThon؟</span>
-                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-blue-700 dark:text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-nu-secondary dark:text-blue-500"></i>
                         </button>
                         <div class="accordion-content px-5 text-gray-600 text-lg dark:text-gray-400">
                             <p class="pb-10">يمتد الهاكاثون على مدى 5 أيام تقريباً، تبدأ من يوم التدشين إلى الحفل الختامي. يجب على الفرق الالتزام بخطة العمل والمواعيد المرحلية خلال هذه الفترة الزمنية المحددة.</p>
@@ -979,7 +1244,7 @@
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
                         <button class="accordion-header flex justify-between items-center w-full p-5 text-right font-semibold text-gray-800 hover:bg-gray-50 transition duration-150 dark:text-gray-200 dark:hover:bg-slate-700" onclick="toggleAccordion(this)">
                             <span>هل يتم توفير دعم فني أو إشراف للفرق؟</span>
-                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-blue-700 dark:text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-nu-secondary dark:text-blue-500"></i>
                         </button>
                         <div class="accordion-content px-5 text-gray-600 text-lg dark:text-gray-400">
                             <p class="pb-10">نعم، سيتم تخصيص مرشدين متخصصين لكل مسار لتقديم الدعم الفني والاستشارات اللازمة للفرق المتأهلة أثناء مرحلة تنفيذ وتطوير المشروع.</p>
@@ -989,7 +1254,7 @@
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
                         <button class="accordion-header flex justify-between items-center w-full p-5 text-right font-semibold text-gray-800 hover:bg-gray-50 transition duration-150 dark:text-gray-200 dark:hover:bg-slate-700" onclick="toggleAccordion(this)">
                             <span>ما هي الجوائز المقدمة للفرق الفائزة؟</span>
-                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-blue-700 dark:text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-nu-secondary dark:text-blue-500"></i>
                         </button>
                         <div class="accordion-content px-5 text-gray-600 text-lg dark:text-gray-400">
                             <p class="pb-10">مجموع الجوائز يبلغ 30,000 ريال سعودي. تُمنح الجوائز المالية المعلنة للمراكز الثلاثة الأولى في كل مسار.</p>
@@ -999,7 +1264,7 @@
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden dark:bg-slate-800">
                         <button class="accordion-header flex justify-between items-center w-full p-5 text-right font-semibold text-gray-800 hover:bg-gray-50 transition duration-150 dark:text-gray-200 dark:hover:bg-slate-700" onclick="toggleAccordion(this)">
                             <span>أين ستُقام العروض النهائية للفرق؟</span>
-                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-blue-700 dark:text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="accordion-icon w-6 h-6 text-nu-secondary dark:text-blue-500"></i>
                         </button>
                         <div class="accordion-content px-5 text-gray-600 text-lg dark:text-gray-400">
                             <p class="pb-10">ستُقام العروض النهائية في حرم جامعة نجران الرئيسي، وسيتم إبلاغ الفرق المتأهلة بالتفاصيل والموقع والوقت المحدد.</p>
@@ -1010,7 +1275,7 @@
             </div>
         </section>
 
-        <section class="py-12 bg-blue-700 dark:bg-blue-800">
+        <section class="py-12 bg-nu-secondary dark:bg-nu-primary">
             <div class="container mx-auto px-4 text-center">
                 
                 <h3 class="text-2xl font-bold text-white mb-3">القناة الرسمية للتواصل والمساعدة</h3>
@@ -1019,9 +1284,9 @@
                 </p>
 
                 <a 
-                    href="https://t.me/+zBdxsQTGhn8zY2Q0"
+                    href="https://t.me/+tI7Sr5HwmP5kN2Y0"
                     target="_blank"
-                    class="inline-flex items-center space-x-2 space-x-reverse px-10 py-4 bg-emerald-400 text-gray-900 text-xl font-bold rounded-full shadow-lg hover:bg-emerald-500 transition duration-300"
+                    class="inline-flex items-center space-x-2 space-x-reverse px-10 py-4 bg-nu-accent text-gray-900 text-xl font-bold rounded-full shadow-lg hover:bg-nu-accent/90 transition duration-300"
                 >
                     <i data-lucide="send" class="w-6 h-6"></i>
                     <span>انضم لقناة التليجرام الآن</span>
@@ -1031,7 +1296,7 @@
 
 
         <footer id="landing-footer" class="bg-gray-900 text-white py-8 dark:bg-gray-900">
-            <div class="container mx-auto px-4 text-center text-sm">
+            <div class="container mx-auto px-4 text-sm">
                 <div class="grid grid-cols-2 lg:grid-cols-8 gap-x-2 gap-y-1 mt-2 mx-auto max-w-lg lg:max-w-full">
                     <a href="#tracks" onclick="internalScroll('tracks')" class="text-gray-400 hover:text-white">المسارات</a>
                     <a href="#rewards" onclick="internalScroll('rewards')" class="text-gray-400 hover:text-white">الجوائز</a>
@@ -1042,14 +1307,14 @@
                     <a href="#partners" onclick="internalScroll('partners')" class="text-gray-400 hover:text-white">الشركاء</a>
                     <a href="#faq" onclick="internalScroll('faq')" class="text-gray-400 hover:text-white">الأسئلة الشائعة</a><br>
                 </div>
-                <p>جميع الحقوق محفوظة لإنيوثون © 2025</p>
+                <p class="mt-4">جميع الحقوق محفوظة لإنيوثون © 2025</p>
             </div>
         </footer>
     </div>
     
     <script>
-        // Set the target date for the countdown (New date: 31 December 2025 at 00:00:00)
-        const targetDate = new Date("2025-12-30T00:00:00").getTime();
+        // Set the target date for the countdown
+        const targetDate = REGISTRATION_CLOSURE_DATE;
         
         // Function to update the countdown
         function updateCountdown() {
@@ -1091,30 +1356,24 @@
         function toggleMobileDropdown() {
             const dropdown = document.getElementById('mobile-nav-dropdown');
             const overlay = document.getElementById('mobile-nav-overlay'); 
-            // Prevent dropdown on large screens (desktop)
-            const isDesktop = window.innerWidth >= 1280; // xl breakpoint
+            const isDesktop = window.innerWidth >= 1280;
             if (isDesktop) return; 
 
             if (dropdown.classList.contains('open')) {
-                // Close: Slide out and hide overlay
                 dropdown.classList.remove('open');
                 overlay.classList.remove('open');
             } else {
-                // Open: Slide in and show overlay
                 dropdown.classList.add('open');
                 overlay.classList.add('open');
             }
         }
 
 
-        // Function for smooth internal scrolling (used only on the landing page)
+        // Function for smooth internal scrolling
         function internalScroll(id) {
             const element = document.getElementById(id);
             if (element) {
-                // Get the offset to account for the fixed header height
                 const headerHeight = document.getElementById('main-header').offsetHeight;
-                
-                // Scroll to the element's position relative to the document top and subtract the header height (plus temporary padding of 20px)
                 const topPosition = window.pageYOffset + element.getBoundingClientRect().top - headerHeight - 20; 
                 
                 window.scrollTo({
@@ -1122,28 +1381,24 @@
                     behavior: 'smooth' 
                 });
             }
-            // Close mobile menu after clicking a link
             const dropdown = document.getElementById('mobile-nav-dropdown');
             const overlay = document.getElementById('mobile-nav-overlay');
             if (dropdown.classList.contains('open')) {
-                 dropdown.classList.remove('open');
-                 overlay.classList.remove('open');
+                dropdown.classList.remove('open');
+                overlay.classList.remove('open');
             }
         }
         
-        // Function to handle accordion toggling
+        // Function to handle accordion toggling - تم تحسين إغلاق العناصر الأخرى
         function toggleAccordion(button) {
             const content = button.nextElementSibling;
-            const icon = button.querySelector('.accordion-icon');
             
             // إغلاق البقية
             document.querySelectorAll('.accordion-header').forEach((header) => {
                 const otherContent = header.nextElementSibling;
-                const otherIcon = header.querySelector('.accordion-icon');
-                if (header !== button) {
+                if (header !== button && header.classList.contains('active')) {
                     header.classList.remove('active');
                     otherContent.style.maxHeight = null;
-                    if(otherIcon) otherIcon.classList.remove('rotate-180');
                 }
             });
             
@@ -1153,20 +1408,14 @@
             if (content.style.maxHeight) {
                 // إغلاق
                 content.style.maxHeight = null;
-                if(icon) icon.classList.remove('rotate-180');
-            } 
-            else {
-                // فتح
-                content.style.maxHeight = content.scrollHeight + 'px';
-                if(icon) icon.classList.add('rotate-180');
+            } else {
+                // فتح - يجب أن يكون ارتفاع المحتوى + الهامش السفلي (10px padding-bottom + 1rem padding-top)
+                // يتم قراءة ارتفاع المحتوى الفعلي (scrollHeight) ويتم تعيينه كحد أقصى للارتفاع (maxHeight)
+                content.style.maxHeight = content.scrollHeight + 16 + 'px'; 
             }
         }
 
         // --- Dark Mode Logic ---
-        
-        /**
-         * Applies the saved theme from localStorage or system preference.
-         */
         function initializeTheme() {
             const theme = localStorage.getItem('theme');
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1175,18 +1424,13 @@
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');
-                // Ensure localStorage is set to 'light' if system is light or theme is manually set to light
                 if (theme === 'light') {
                     localStorage.setItem('theme', 'light');
                 }
             }
-            // Re-create icons to reflect the theme change (sun/moon)
             lucide.createIcons();
         }
 
-        /**
-         * Toggles the theme between light and dark and saves the preference.
-         */
         function toggleDarkMode() {
             if (document.documentElement.classList.contains('dark')) {
                 document.documentElement.classList.remove('dark');
@@ -1195,22 +1439,41 @@
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
             }
-            // Re-create icons to reflect the theme change (sun/moon)
             lucide.createIcons();
         }
 
         // ----------------------------------------------------------------------
-        // NEW WORKSHOP BUTTON LOGIC
+        // (الكود المحدث والنهائي لتحديد حالة الورشة)
         // ----------------------------------------------------------------------
 
-        // Function to generate the workshop button based on status
+        // (هذه الدالة صحيحة وتتضمن نافذة الـ 4 ساعات)
+        function getWorkshopStatus(workshopDateTime) {
+            const now = new Date().getTime(); 
+            const workshopTime = new Date(workshopDateTime).getTime();
+
+            // 1. وقت البدء: هو نفس وقت الورشة المحدد
+            const startWindow = workshopTime; 
+            // 2. وقت الإغلاق: 4 ساعات بعد وقت البدء
+            const endWindow = workshopTime + (4 * 60 * 60 * 1000); 
+
+            if (now >= endWindow) {
+                // إذا مر على الورشة 4 ساعات -> "منتهية"
+                return 'ended';
+            } else if (now >= startWindow && now <= endWindow) {
+                // إذا كان الوقت الحالي ضمن نافذة الـ 4 ساعات -> "متاحة"
+                return 'available';
+            } else { 
+                // إذا لم يبدأ وقت الورشة بعد -> "قريباً"
+                return 'pending';
+            }
+        }
+
         function createWorkshopButton(status, link) {
             let text = '';
             let icon = '';
             let className = 'workshop-status-btn';
             let href = '#';
             let target = '';
-            // Increased spacing for the 'Pending' loader icon (ml-4 rtl:mr-4)
             let iconClasses = 'w-4 h-4 ml-4 rtl:mr-0 rtl:ml-2';
             
             switch (status) {
@@ -1231,11 +1494,10 @@
                     text = 'قريباً';
                     icon = 'loader';
                     className += ' status-pending';
-                    iconClasses += ' animate-spin'; // ADDED: Tailwind spin animation for loader
+                    iconClasses += ' animate-spin'; 
                     break;
             }
 
-            // Using event.preventDefault() for non-clickable buttons
             const onClickAttr = (status === 'pending' || status === 'ended') ? `onclick="event.preventDefault();"` : '';
 
             return `
@@ -1246,33 +1508,46 @@
             `;
         }
 
-        // Function to inject buttons into the placeholders
-        function initializeWorkshopButtons() {
+        // (دالة التحديث الديناميكي - صحيحة)
+        function updateAllWorkshopButtons() {
             document.querySelectorAll('[data-workshop-status]').forEach(placeholder => {
-                const status = placeholder.getAttribute('data-workshop-status');
+                const parentCard = placeholder.closest('div[id^="workshop-"]');
+                if (!parentCard) return;
+
+                const workshopId = parentCard.id.split('-')[1]; 
                 const link = placeholder.getAttribute('data-workshop-link');
                 
-                // Only inject if the placeholder is empty
-                if (!placeholder.innerHTML.trim()) {
-                    placeholder.innerHTML = createWorkshopButton(status, link);
+                const workshopDateTime = WORKSHOP_UTC_DATES[workshopId]; 
+                
+                let newStatus;
+
+                if (workshopDateTime) {
+                    newStatus = getWorkshopStatus(workshopDateTime);
+                } else {
+                    newStatus = placeholder.getAttribute('data-workshop-status');
+                }
+
+                const oldStatus = placeholder.getAttribute('data-current-status');
+
+                if (newStatus !== oldStatus) {
+                    placeholder.innerHTML = createWorkshopButton(newStatus, link);
+                    placeholder.setAttribute('data-current-status', newStatus);
+                    lucide.createIcons(); 
                 }
             });
-            // Re-create icons for the newly injected buttons
-            lucide.createIcons();
         }
-
         // ----------------------------------------------------------------------
 
 
         // Initial setup
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize theme first
             initializeTheme();
             
-            // NEW: Initialize workshop buttons
-            initializeWorkshopButtons();
+            // (تحديث ليعمل كل دقيقة - صحيح)
+            updateAllWorkshopButtons();
+            setInterval(updateAllWorkshopButtons, 60000); 
             
-            // Run the countdown immediately and then every second
+            // تشغيل العد التنازلي
             updateCountdown();
             setInterval(updateCountdown, 1000);
             
@@ -1281,33 +1556,27 @@
             const ctx = canvas.getContext("2d");
 
             let particles = [];
-            
             let numParticles = 150; 
             let speedFactor = 0.7; 
-            
             const maxDistance = 250; 
             const maxRadius = 4; 
 
-            // Function to update settings based on screen size 
             function updateParticleSettings() {
                 speedFactor = 0.7; 
-
                 if (window.innerWidth < 768) {
                     numParticles = 100; 
                 } else if (window.innerWidth < 1280) {
                     numParticles = 120; 
                 } else {
-                     numParticles = 150; 
+                    numParticles = 150; 
                 }
             }
 
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
-                // Height is based on scrollHeight for absolute positioning (moves with scroll)
                 canvas.height = Math.max(document.body.scrollHeight, window.innerHeight); 
             }
 
-            // Debounce function to limit resize handler calls
             function debounce(func, wait) {
                 let timeout;
                 return function executedFunction(...args) {
@@ -1322,11 +1591,16 @@
 
             const debouncedResizeHandler = debounce(() => {
                 resizeCanvas();
-                // Re-initialize particles on resize to apply correct density/speed
-                updateParticleSettings(); // Update settings based on new size
-                particles = []; // Clear existing particles
+                updateParticleSettings(); 
+                particles = []; 
                 
-                // Create new particles with updated settings
+                // استخدام الألوان الجديدة للذرات
+                const colors = [
+                    '#078394', // nu-secondary
+                    '#daac58', // nu-accent
+                    '#36b7c3', // nu-purple
+                ];
+
                 for (let i = 0; i < numParticles; i++) {
                     particles.push({
                         x: Math.random() * canvas.width,
@@ -1334,16 +1608,20 @@
                         r: Math.random() * (maxRadius - 1) + 1,
                         dx: (Math.random() - 0.5) * speedFactor, 
                         dy: (Math.random() - 0.5) * speedFactor, 
-                        color: ["#1d4edd", "#34d399", "#7c3aed"][Math.floor(Math.random() * 3)]
+                        color: colors[Math.floor(Math.random() * colors.length)]
                     });
                 }
             }, 250); 
 
-            // Initialize settings and particles based on initial load
             updateParticleSettings();
             resizeCanvas(); 
-
-            // Create initial particles
+            
+            // استخدام الألوان الجديدة للذرات
+            const colors = [
+                '#078394', // nu-secondary
+                '#daac58', // nu-accent
+                '#36b7c3', // nu-purple
+            ];
             for (let i = 0; i < numParticles; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
@@ -1351,43 +1629,36 @@
                     r: Math.random() * (maxRadius - 1) + 1, 
                     dx: (Math.random() - 0.5) * speedFactor, 
                     dy: (Math.random() - 0.5) * speedFactor, 
-                    color: ["#1d4edd", "#34d399", "#7c3aed"][Math.floor(Math.random() * 3)] // ألوان الشعار
+                    color: colors[Math.floor(Math.random() * colors.length)] 
                 });
             }
 
-            // Listen for window resize and body height changes
             if (typeof ResizeObserver !== 'undefined') {
                 const resizeObserver = new ResizeObserver(entries => {
-                   debouncedResizeHandler(); // Use debounced handler here too
+                    debouncedResizeHandler();
                 });
-                // Observe the body for height changes (to cover all content)
                 resizeObserver.observe(document.body);
-                // Observe window for width changes (handles general resize and orientation change)
                 window.addEventListener("resize", debouncedResizeHandler);
             } else {
-                // Fallback for older browsers
                 window.addEventListener("resize", debouncedResizeHandler);
             }
             
-            let animationFrameId = null; // To control the animation loop
+            let animationFrameId = null;
 
             function draw() {
-                // Re-check canvas size dynamically for absolute positioning
-                     if (canvas.height !== Math.max(document.body.scrollHeight, window.innerHeight)) {
-                            resizeCanvas(); 
-                       }
+                if (canvas.height !== Math.max(document.body.scrollHeight, window.innerHeight)) {
+                        resizeCanvas(); 
+                    }
                 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                // Get the current theme to adjust color transparency
                 const isDark = document.documentElement.classList.contains('dark');
                 
                 // 2. رسم الذرات
                 for (let p of particles) {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    // Increased opacity for particle fill - adjusted for dark mode colors
-                    ctx.fillStyle = isDark ? p.color + "d0" : p.color + "b0"; // Higher opacity in dark mode
+                    ctx.fillStyle = isDark ? p.color + "d0" : p.color + "b0"; 
                     ctx.fill();
                 }
 
@@ -1399,15 +1670,13 @@
                         const dx = a.x - b.x;
                         const dy = a.y - b.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
-                        // شرط الاتصال والانفصال
                         if (dist < maxDistance) {
                             const opacity = 1 - dist / maxDistance;
                             ctx.beginPath();
                             ctx.moveTo(a.x, a.y);
                             ctx.lineTo(b.x, b.y);
-                            // Set stroke color based on theme and opacity
                             const lineColor = isDark ? "rgba(255, 255, 255, " : "rgba(15, 23, 42, ";
-                            ctx.strokeStyle = lineColor + (opacity * 0.25) + ")"; // Subtle line opacity
+                            ctx.strokeStyle = lineColor + (opacity * 0.25) + ")"; 
                             ctx.lineWidth = 1; 
                             ctx.stroke();
                         }
@@ -1419,26 +1688,22 @@
                     p.x += p.dx;
                     p.y += p.dy;
 
-                    // ارتداد الذرات عند الوصول للحافة
                     if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
                     if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
 
-                    // Keep particles within bounds explicitly 
                     p.x = Math.max(0, Math.min(p.x, canvas.width));
                     p.y = Math.max(0, Math.min(p.y, canvas.height));
                 }
 
-                animationFrameId = requestAnimationFrame(draw); // Store the frame ID
+                animationFrameId = requestAnimationFrame(draw); 
             }
 
-            // Function to start the animation
             function startAnimation() {
-                if (!animationFrameId) { // Only start if not already running
+                if (!animationFrameId) { 
                     draw();
                 }
             }
 
-            // Function to stop the animation
             function stopAnimation() {
                  if (animationFrameId) {
                      cancelAnimationFrame(animationFrameId);
@@ -1446,10 +1711,8 @@
                  }
             }
 
-            // Start the animation initially
             startAnimation();
 
-            // Optional: Pause animation when tab is not visible to save resources
             document.addEventListener("visibilitychange", () => {
                 if (document.hidden) {
                     stopAnimation();
