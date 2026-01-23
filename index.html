@@ -15,20 +15,11 @@
         // 1. تاريخ إغلاق التسجيل (يستخدم للعد التنازلي)
         const REGISTRATION_CLOSURE_DATE = new Date("2026-01-21T23:45:00+03:00").getTime();
 
-        // 2. (بيانات اختبار محدثة) - لضمان عمل "انضم الآن" في هذا الوقت
-        // (تم ضبطها بناءً على الوقت الحالي: 12 نوفمبر، 10:57م)
+        // 2. (بيانات اختبار محدثة)
         const WORKSHOP_UTC_DATES = {
-            // (1) حالة "منتهية" - تم تحديدها أمس (11 نوفمبر)
             '1': "2025-11-18T18:30:00+03:00", 
-
-            // (2) حالة "انضم الآن" - تم تحديدها اليوم 10:30م (19:30 UTC)
-            // (بما أن الوقت 10:57م، فهو يقع ضمن نافذة الـ 4 ساعات)
             '2': "2025-11-19T19:30:00+03:00", 
-
-            // (3) حالة "قريباً" - تم تحديدها غداً (13 نوفمبر)
             '3': "2025-11-23T12:30:00+03:00",
-            
-            // (بقية الورش ستظهر "قريباً" أيضاً)
             '4': "2025-11-26T12:30:00+03:00", 
             '5': "2025-12-08T09:00:00+03:00", 
             '6': "2025-12-09T09:00:00+03:00", 
@@ -40,29 +31,26 @@
         };
 
 
-        // تهيئة Tailwind لتضمين الألوان المخصصة والرسوم المتحركة
+        // تهيئة Tailwind
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        // تعريف الألوان الجديدة كفئات يمكن استخدامها في Tailwind
-                        // تم تغيير Primary هنا ولكن سيتم تجاهله في خلفية الـ Dark Mode يدوياً في CSS
-                        'nu-primary': '#163d6a',     // كحلي/أزرق داكن (للنصوص الداكنة والمكونات)
-                        'nu-secondary': '#078394',   // أزرق مائل للأخضر (أساسي)
-                        'nu-accent': '#daac58',      // أصفر/ذهبي (التمييز)
-                        'nu-accent-light': '#fcc26f', // أصفر/ذهبي فاتح (بديل التمييز في Light Mode)
-                        'nu-accent-dark': '#b5892f', // أصفر/ذهبي داكن (بديل التمييز في Dark Mode)
-                        'nu-purple': '#36b7c3',      // أزرق فاتح (بديل التمييز في Dark Mode)
-                        'nu-light-bg': '#ebf4f6',    // رمادي فاتح (لون الخلفية في Light Mode)
-                        // ألوان الخط الزمني - تم استخدام فئات Tailwind المدمجة (مثل emerald-400) بشكل مباشر لتكون أكثر مرونة
+                        'nu-primary': '#163d6a',     // كحلي
+                        'nu-secondary': '#078394',   // أزرق مائل للأخضر
+                        'nu-accent': '#daac58',      // ذهبي
+                        'nu-accent-light': '#fcc26f',
+                        'nu-accent-dark': '#b5892f',
+                        'nu-purple': '#36b7c3',      // أزرق فاتح
+                        'nu-light-bg': '#ebf4f6',    // خلفية فاتحة
                         'nu-main-color': '#078394',
                         'nu-secondary-color': '#078394', 
                     },
                     keyframes: {
                         spin: { to: { transform: 'rotate(360deg)' } },
                         ping: { '75%, 100%': { transform: 'scale(2)', opacity: '0' } },
-                        'glow-pulse': { // تم تحديث اللون في التوهج
+                        'glow-pulse': { 
                             '0%, 100%': { boxShadow: '0 0 10px rgba(218, 172, 88, 0.4)' },
                             '50%': { boxShadow: '0 0 20px rgba(218, 172, 88, 0.8)' },
                         },
@@ -78,13 +66,12 @@
     </script>
     
     <style>
-        /* تعريف متغيرات CSS (تم تحديثها لتطبيقات المحتوى) */
         :root {
-            --color-primary: #163d6a; /* كحلي */
-            --color-secondary: #078394; /* أزرق مائل للأخضر */
-            --color-accent: #daac58; /* أصفر/ذهبي */
-            --color-purple: #36b7c3; /* أزرق فاتح */
-            --color-background-light: #ebf4f6; /* رمادي فاتح */
+            --color-primary: #163d6a; 
+            --color-secondary: #078394; 
+            --color-accent: #daac58; 
+            --color-purple: #36b7c3; 
+            --color-background-light: #ebf4f6; 
             --nu-main-color: #078394; 
             --nu-secondary-color: #078394; 
         }
@@ -92,25 +79,24 @@
         @font-face {
             font-family: 'DIN Next LT Arabic';
             src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//DINNEXTLTARABIC-LIGHT-2-2.ttf') format('truetype');
-            font-weight: 300; /* الوزن الخفيف */
+            font-weight: 300; 
             font-style: normal;
         }
 
         @font-face {
             font-family: 'DIN Next LT Arabic';
             src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//DINNextLTArabic-Medium-4.ttf') format('truetype');
-            font-weight: 500; /* الوزن العادي */
+            font-weight: 500; 
             font-style: normal;
         }
 
         @font-face {
             font-family: 'DIN Next LT Arabic';
             src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//DINNextLTArabic-Bold-4.ttf') format('truetype');
-            font-weight: 700; /* الوزن العريض */
+            font-weight: 700; 
             font-style: normal;
         }
 
-        
         body {
             font-family: 'DIN Next LT Arabic', sans-serif;
             background-color: var(--color-background-light); 
@@ -118,33 +104,25 @@
             position: relative;
             min-height: 100vh;
             overflow-x: hidden; 
-            
-            /* الخلفية النقطية لـ Light Mode (تم استرجاع لون النقط إلى الأصل) */
             background-image: 
                 linear-gradient(0deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px), 
                 linear-gradient(90deg, transparent 9px, rgba(15, 23, 42, 0.03) 10px, transparent 11px);
             background-size: 50px 50px; 
         }
 
-        /* Dark mode background pattern - تم استرجاعه للون الأصلي #0f172a (Slate 900) */
         html.dark body {
-            background-color: #0f172a; /* Slate 900 (اللون الأصلي) */
+            background-color: #0f172a; 
             background-image: 
                 linear-gradient(0deg, transparent 9px, rgba(255, 255, 255, 0.03) 10px, transparent 11px), 
                 linear-gradient(90deg, transparent 9px, rgba(255, 255, 255, 0.03) 10px, transparent 11px);
         }
 
-        /* ----------------------------------------------------------------- */
-        /* Custom Box Style for Total Rewards (مجموع الجوائز) */
-        /* ----------------------------------------------------------------- */
         .total-rewards-box {
             display: inline-block;
             padding: 1rem 2rem;
-            /* تم تحديث التدرج للون الثانوي الجديد (أزرق مائل للأخضر) */
             background: linear-gradient(135deg, var(--color-secondary) 0%, #056a79 100%); 
             color: white;
             border-radius: 12px;
-            /* تم تحديث ظل الصندوق للون الثانوي الجديد (أزرق مائل للأخضر) */
             box-shadow: 0 10px 20px rgba(7, 131, 148, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 10;
@@ -152,25 +130,20 @@
         }
         
         html.dark .total-rewards-box {
-            /* تم تحديث التدرج للون الأرجواني الجديد (أزرق فاتح) */
             background: linear-gradient(135deg, var(--color-purple) 0%, #2f98a2 100%); 
-            /* تم تحديث ظل الصندوق للون الأرجواني الجديد (أزرق فاتح) */
             box-shadow: 0 10px 20px rgba(54, 183, 195, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
             animation: pulse-border-dark 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
         }
 
-        /* تم تحديث الرسوم المتحركة لحدود الصندوق لتعكس الألوان الجديدة */
         @keyframes pulse-border {
-            0%, 100% { box-shadow: 0 0 0 0px rgba(7, 131, 148, 0.7); } /* لون ثانوي جديد */
+            0%, 100% { box-shadow: 0 0 0 0px rgba(7, 131, 148, 0.7); } 
             50% { box-shadow: 0 0 0 8px rgba(7, 131, 148, 0); }
         }
         @keyframes pulse-border-dark {
-            0%, 100% { box-shadow: 0 0 0 0px rgba(54, 183, 195, 0.7); } /* لون أزرق فاتح جديد */
+            0%, 100% { box-shadow: 0 0 0 0px rgba(54, 183, 195, 0.7); } 
             50% { box-shadow: 0 0 0 8px rgba(54, 183, 195, 0); }
         }
-        /* ----------------------------------------------------------------- */
 
-        /* 🧬 Canvas خلفية الذرات المترابطة */
         #atom-bg {
             position: absolute; 
             top: 0;
@@ -181,13 +154,11 @@
             background: transparent;
         }
 
-        /* رفع المحتوى فوق الزينة */
         header, section, footer, .page-view {
             position: relative;
             z-index: 10;
         }
         
-        /* Accordion base styles */
         .accordion-content {
             max-height: 0;
             overflow: hidden;
@@ -205,21 +176,17 @@
             transform: rotate(180deg);
         }
 
-        /* Countdown styling */
         .countdown-digit {
-            /* تم الاحتفاظ بالخلفية لتبدو متوهجة على الـ Hero Section */
             background-color: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
-        /* HERO BACKGROUND STYLING WITH IMAGE AND OVERLAY */
         .hero-bg {
             background-image: url('خلفية.jpg'); 
             background-size: auto;
             background-position: center;
-            /* إضافة تدرج لتعتيم الصورة وجعل النص واضحًا */
             position: relative;
             z-index: 1;
         }
@@ -228,18 +195,15 @@
             content: "";
             position: absolute;
             inset: 0;
-            /* تم تحديث التدرج ليعكس الألوان الجديدة: من الكحلي إلى الثانوي/الأزرق المائل للأخضر */
             background: linear-gradient(180deg, rgba(22, 61, 106, 0.8) 0%, rgba(7, 131, 148, 0.5) 100%);
             z-index: 1;
         }
         
-        /* Ensure content is above the overlay */
         .hero-bg > .container {
             position: relative;
             z-index: 2; 
         }
         
-        /* --- Custom Grid Ordering for Rewards Section --- */
         @media (min-width: 768px) {
             .reward-1st { order: 2; }
             .reward-2nd { order: 1; }
@@ -251,9 +215,6 @@
             .reward-3rd { order: 3; }
         }
 
-        /* ---------------------------------------------------- */
-        /* Dropdown Menu Styles for Mobile (Side Drawer) - تم تحديث لون الخلفية الداكن */
-        /* ---------------------------------------------------- */
         #mobile-nav-dropdown {
             position: fixed; 
             top: 0;
@@ -262,14 +223,11 @@
             max-width: 320px; 
             height: 100%; 
             z-index: 55; 
-            
-            background-color: var(--color-primary); /* كحلي */
+            background-color: var(--color-primary); 
             box-shadow: -4px 0 10px rgba(0, 0, 0, 0.5); 
             overflow-y: auto; 
-            
             transform: translateX(100%);
             transition: transform 0.3s ease-in-out; 
-            
             display: none; 
         }
         
@@ -298,7 +256,6 @@
             background-color: rgba(255, 255, 255, 0.1); 
         }
         
-        /* Overlay for the side menu */
         #mobile-nav-overlay {
             position: fixed;
             inset: 0;
@@ -314,35 +271,30 @@
             visibility: visible;
         }
 
-        /* UPDATED: Dark mode toggle button icon styles (Generic) */
         .moon-icon { display: block; }
         .sun-icon { display: none; }
 
         html.dark .moon-icon { display: none; }
         html.dark .sun-icon { display: block; }
         
-        /* NEW: Strategic Partner Styling */
         .strategic-partner-logo {
             padding: 1rem;
             background: var(--nu-light-bg);
             border-radius: 16px;
-            border: 4px solid var(--color-secondary); /* أزرق مائل للأخضر */
-            box-shadow: 0 15px 30px rgba(7, 131, 148, 0.2); /* أزرق مائل للأخضر */
+            border: 4px solid var(--color-secondary); 
+            box-shadow: 0 15px 30px rgba(7, 131, 148, 0.2); 
             transition: all 0.3s ease-in-out;
         }
         .strategic-partner-logo:hover {
             transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(7, 131, 148, 0.3); /* أزرق مائل للأخضر */
+            box-shadow: 0 20px 40px rgba(7, 131, 148, 0.3); 
         }
         html.dark .strategic-partner-logo {
             background: var(--nu-light-bg); 
-            border-color: var(--color-purple); /* أزرق فاتح */
-            box-shadow: 0 15px 30px rgba(54, 183, 195, 0.2); /* أزرق فاتح */
+            border-color: var(--color-purple); 
+            box-shadow: 0 15px 30px rgba(54, 183, 195, 0.2); 
         }
         
-        /* ---------------------------------------------------- */
-        /* UPDATED: Workshop Status Button Styles */
-        /* ---------------------------------------------------- */
         .workshop-status-btn {
             display: flex;
             align-items: center;
@@ -359,30 +311,30 @@
         }
 
         .status-available {
-            background-color: var(--color-secondary); /* أزرق مائل للأخضر */
+            background-color: var(--color-secondary); 
             color: white; 
-            border-color: var(--color-accent); /* أصفر/ذهبي */
-            box-shadow: 0 0 15px rgba(218, 172, 88, 0.5); /* أصفر/ذهبي */
+            border-color: var(--color-accent); 
+            box-shadow: 0 0 15px rgba(218, 172, 88, 0.5); 
             cursor: pointer;
             animation: glow-pulse 2s infinite ease-in-out; 
         }
         .status-available:hover {
-            background-color: #056a79; /* تظليل أغمق للأزرق المائل للأخضر */
+            background-color: #056a79; 
             transform: scale(1.03);
         }
 
         .status-record {
-            background-color: #163d6a; /* رمادي متوسط */
+            background-color: #163d6a; 
             color: white;
-            border-color: #3e6086; /* تظليل أفتح للرمادي */
+            border-color: #3e6086; 
             opacity: 0.95;
             cursor: default;
         }
 
         .status-pending {
-            background-color: var(--color-purple); /* أزرق فاتح */
+            background-color: var(--color-purple); 
             color: white;
-            border-color: #a4e1e6; /* تظليل أفتح للأزرق الفاتح */
+            border-color: #a4e1e6; 
             opacity: 0.95;
             cursor: default;
         }
@@ -402,11 +354,7 @@
              color: #d1d5db; 
              border-color: #4b5563; 
         }
-        /* ---------------------------------------------------- */
-
-        /* ----------------------------------------------------------------- */
-        /* START: NEW LOGO SWAP STYLING - تم الحفاظ عليها كما هي */
-        /* ----------------------------------------------------------------- */
+        
         .marathon-logo-base {
             width: auto; 
             height: 4rem; 
@@ -416,11 +364,7 @@
         .logo-dark { display: none; }
         html.dark .logo-light { display: none; }
         html.dark .logo-dark { display: block; }
-        /* ----------------------------------------------------------------- */
 
-        /* ---------------------------------------------------- */
-        /* START: TIMELINE STYLES - تم تحديث الألوان هنا */
-        /* ---------------------------------------------------- */
         .timeline-line {
             pointer-events: none;
             position: absolute;
@@ -429,11 +373,9 @@
             height: 100%;
             width: 4px;
             transform: translateX(50%);
-            /* أزرق مائل للأخضر في Light Mode */
             background-color: var(--color-secondary); 
         }
         html.dark .timeline-line {
-            /* أزرق فاتح في Dark Mode */
             background-color: var(--color-purple); 
         }
         @media (max-width: 1023px) { 
@@ -452,12 +394,12 @@
             height: 16px;
             width: 16px;
             border-radius: 9999px;
-            border: 2px solid var(--color-accent); /* أصفر/ذهبي */
-            background-color: var(--color-secondary); /* أزرق مائل للأخضر */
+            border: 2px solid var(--color-accent); 
+            background-color: var(--color-secondary); 
         }
         html.dark .timeline-dot {
-            border-color: var(--color-accent); /* أصفر/ذهبي */
-            background-color: var(--color-purple); /* أزرق فاتح */
+            border-color: var(--color-accent); 
+            background-color: var(--color-purple); 
         }
         @media (max-width: 1023px) { 
             .timeline-dot {
@@ -472,7 +414,7 @@
             position: absolute;
             inset: -4px;
             border-radius: 9999px;
-            background-color: var(--color-accent); /* أصفر/ذهبي */
+            background-color: var(--color-accent); 
             opacity: 0.5;
             animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
@@ -480,38 +422,34 @@
             position: relative;
             margin-bottom: 3.5rem;
         }
-        /* الأنماط الرئيسية لبطاقة الخط الزمني */
         .timeline-card-wrapper {
             position: relative;
             z-index: 10;
             padding: 1.5rem; 
             border-radius: 1.5rem;
-            /* Light Mode */
             background-color: white; 
-            border: 2px solid var(--color-secondary); /* إطار أزرق مائل للأخضر */
+            border: 2px solid var(--color-secondary); 
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             max-width: 90%; 
         }
         html.dark .timeline-card-wrapper {
-            /* Dark Mode */
-            background-color: rgba(30, 41, 59, 0.95); /* Slate 800 داكن - تم تركه ليكون تباين مع الخلفية الأصلية (#0f172a) */
-            border-color: var(--color-purple); /* إطار أزرق فاتح في Dark Mode */
+            background-color: rgba(30, 41, 59, 0.95); 
+            border-color: var(--color-purple); 
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
             color: white; 
         }
 
-        /* الألوان الداخلية للنصوص */
         .timeline-number {
-            color: var(--color-secondary); /* أزرق مائل للأخضر في Light Mode */
+            color: var(--color-secondary); 
             font-size: 2.5rem;
             font-weight: 800;
         }
         html.dark .timeline-number {
-            color: var(--color-accent); /* أصفر/ذهبي في Dark Mode */
+            color: var(--color-accent); 
         }
 
         .timeline-title {
-            color: var(--color-primary); /* كحلي في Light Mode */
+            color: var(--color-primary); 
             font-size: 1.5rem;
             font-weight: 700;
         }
@@ -520,59 +458,47 @@
         }
 
         .timeline-date {
-            color: #475569; /* Slate 600 في Light Mode */
+            color: #475569; 
             font-size: 1.125rem;
             direction: rtl;
         }
         html.dark .timeline-date {
-            color: #94a3b8; /* Slate 400 في Dark Mode */
+            color: #94a3b8; 
         }
         
         .timeline-description {
-            color: #64748b; /* Slate 500 في Light Mode */
+            color: #64748b; 
             font-size: 0.95rem;
             margin-top: 0.75rem;
         }
         html.dark .timeline-description {
-            color: #e2e8f0; /* Slate 200 في Dark Mode */
+            color: #e2e8f0; 
         }
 
-        /* ---------------------------------------------------- */
-        /* Accordion Icons - تم تحديث الألوان هنا */
-        /* ---------------------------------------------------- */
         .accordion-icon {
-            color: var(--color-secondary); /* أزرق مائل للأخضر في Light Mode */
+            color: var(--color-secondary); 
         }
         html.dark .accordion-icon {
-            color: var(--color-purple); /* أزرق فاتح في Dark Mode */
+            color: var(--color-purple); 
         }
         
-        /* ---------------------------------------------------- */
-        /* Terms and Conditions (الشروط والأحكام) - تم تحديث الألوان هنا */
-        /* ---------------------------------------------------- */
         .border-r-4.border-nu-secondary {
-            border-color: var(--color-secondary); /* أزرق مائل للأخضر */
+            border-color: var(--color-secondary); 
         }
         html.dark .border-r-4.border-nu-secondary {
-            border-color: var(--color-purple); /* أزرق فاتح */
+            border-color: var(--color-purple); 
         }
         .text-nu-secondary {
-            color: var(--color-secondary); /* أزرق مائل للأخضر */
+            color: var(--color-secondary); 
         }
-        /* تم ترك لون النصوص في الشروط والأحكام داكناً في Dark Mode ليظهر على الحدود الزرقاء الفاتحة */
         html.dark .text-nu-secondary {
-            color: var(--color-purple); /* أزرق فاتح */
+            color: var(--color-purple); 
         }
-        /* ---------------------------------------------------- */
         
-        /* ----------------------------------------------------------------- */
-        /* NEW: Dark Mode Header */
-        /* ----------------------------------------------------------------- */
         html.dark #main-header {
-            background-color: #0f172a; /* Slate 900 الأصلي */
+            background-color: #0f172a; 
             box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.1), 0 2px 4px -2px rgba(255, 255, 255, 0.05);
         }
-
 
         @media (min-width: 1024px) {
             .timeline-item-container {
@@ -619,7 +545,6 @@
                  margin-right: 0;
              }
         }
-        /* ---------------------------------------------------- */
     </style>
 </head>
 <body>
@@ -647,15 +572,16 @@
                 
             </div>
 
-            <nav id="landing-nav" class="hidden lg:flex space-x-3 space-x-reverse lg:space-x-4 text-base font-500 absolute left-1/2 transform -translate-x-1/2">
+            <nav id="landing-nav" class="hidden lg:flex space-x-2 space-x-reverse lg:space-x-3 xl:space-x-4 text-base font-500 absolute left-1/2 transform -translate-x-1/2">
+                <a href="#statistics" onclick="internalScroll('statistics')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الإحصائيات</a>
                 <a href="#tracks" onclick="internalScroll('tracks')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">المسارات</a>
                 <a href="#rewards" onclick="internalScroll('rewards')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الجوائز</a>
                 <a href="#criteria" onclick="internalScroll('criteria')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">المعايير</a>
                 <a href="#schedule" onclick="internalScroll('schedule')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">البرنامج الزمني</a>
                 <a href="#workshops" onclick="internalScroll('workshops')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">ورش العمل</a>
                 <a href="#terms" onclick="internalScroll('terms')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الشروط</a>
-                <a href="#partners" onclick="internalScroll('partners')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الجهات المنفذة والشركاء</a> 
-                <a href="#faq" onclick="internalScroll('faq')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الأسئلة الشائعة</a>
+                <a href="#partners" onclick="internalScroll('partners')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الشركاء</a> 
+                <a href="#faq" onclick="internalScroll('faq')" class="text-gray-600 hover:text-nu-secondary transition duration-150 p-2 whitespace-nowrap dark:text-gray-300 dark:hover:text-white">الأسئلة</a>
             </nav>
             
             <div class="flex items-center space-x-2 space-x-reverse">
@@ -691,8 +617,8 @@
             </button>
         </div>
         
-        <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileDropdown();">
-            <span>المقدمة</span>
+        <a href="#statistics" onclick="internalScroll('statistics'); toggleMobileDropdown();">
+            <span>الإحصائيات</span>
             <i data-lucide="chevron-left" class="w-5 h-5"></i>
         </a>
         <a href="#tracks" onclick="internalScroll('tracks'); toggleMobileDropdown();">
@@ -780,6 +706,124 @@
     </div>
 </section>
 
+<!-- START: Statistics Section -->
+        <section id="statistics" class="py-16 md:py-24 relative z-10 bg-nu-light-bg/50 dark:bg-slate-900/50">
+            <div class="container mx-auto px-4">
+                <h3 class="text-4xl font-bold text-center text-gray-900 mb-12 dark:text-white">إحصائيات التسجيل</h3>
+
+                <!-- General Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-4xl mx-auto">
+                    <!-- Total Teams -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-r-4 border-nu-secondary dark:bg-slate-800 dark:border-nu-purple flex items-center justify-between transition hover:-translate-y-1 hover:shadow-xl">
+                        <div>
+                            <p class="text-gray-500 font-medium text-lg dark:text-gray-400">إجمالي الفرق المسجلة</p>
+                            <p class="text-5xl font-extrabold text-nu-secondary dark:text-nu-purple mt-2">104</p>
+                        </div>
+                        <div class="p-4 bg-nu-secondary/10 rounded-full dark:bg-nu-purple/20">
+                            <i data-lucide="users" class="w-10 h-10 text-nu-secondary dark:text-nu-purple"></i>
+                        </div>
+                    </div>
+
+                    <!-- Total Students -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-r-4 border-nu-accent dark:bg-slate-800 dark:border-nu-accent flex flex-col justify-center transition hover:-translate-y-1 hover:shadow-xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-gray-500 font-medium text-lg dark:text-gray-400">إجمالي الطلبة</p>
+                                <p class="text-5xl font-extrabold text-nu-accent dark:text-nu-accent mt-2">389</p>
+                            </div>
+                            <div class="p-4 bg-nu-accent/10 rounded-full dark:bg-nu-accent/20">
+                                <i data-lucide="user-pen" class="w-10 h-10 text-nu-accent dark:text-nu-accent"></i>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 text-sm font-semibold border-t pt-4 border-gray-100 dark:border-gray-700">
+                            <span class="text-blue-600 dark:text-blue-400 flex items-center"><i data-lucide="user" class="w-4 h-4 ml-1"></i> طلاب: 114</span>
+                            <span class="text-pink-600 dark:text-pink-400 flex items-center"><i data-lucide="user-round" class="w-4 h-4 ml-1"></i> طالبات: 275</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Track Breakdown -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <!-- Health -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-red-500 hover:shadow-xl transition transform hover:-translate-y-1 dark:bg-slate-800">
+                        <h4 class="text-xl font-bold text-gray-900 mb-6 flex items-center dark:text-white">
+                            <i data-lucide="heart-pulse" class="w-6 h-6 ml-2 text-red-500"></i> المسار الصحي
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg dark:bg-slate-700/50">
+                                <span class="text-gray-600 font-semibold dark:text-gray-300">عدد الفرق</span>
+                                <span class="font-bold text-2xl text-red-500">47</span>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-500 text-sm dark:text-gray-400">الطلاب (66)</span>
+                                    <span class="text-gray-500 text-sm dark:text-gray-400">الطالبات (132)</span>
+                                </div>
+                                <div class="flex h-2.5 w-full rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                                    <div class="bg-blue-400 h-full" style="width: 33%"></div>
+                                    <div class="bg-pink-400 h-full" style="width: 67%"></div>
+                                </div>
+                                <p class="text-center text-sm text-gray-400 mt-1 font-medium">المجموع: 198</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-nu-secondary hover:shadow-xl transition transform hover:-translate-y-1 dark:bg-slate-800 dark:border-nu-secondary">
+                        <h4 class="text-xl font-bold text-gray-900 mb-6 flex items-center dark:text-white">
+                            <i data-lucide="cpu" class="w-6 h-6 ml-2 text-nu-secondary"></i> المسار الهندسي والتقني
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg dark:bg-slate-700/50">
+                                <span class="text-gray-600 font-semibold dark:text-gray-300">عدد الفرق</span>
+                                <span class="font-bold text-2xl text-nu-secondary">43</span>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-500 text-sm dark:text-gray-400">الطلاب (39)</span>
+                                    <span class="text-gray-500 text-sm dark:text-gray-400">الطالبات (123)</span>
+                                </div>
+                                <div class="flex h-2.5 w-full rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                                    <div class="bg-blue-400 h-full" style="width: 24%"></div>
+                                    <div class="bg-pink-400 h-full" style="width: 76%"></div>
+                                </div>
+                                <p class="text-center text-sm text-gray-400 mt-1 font-medium">المجموع: 162</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Humanities -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-nu-accent hover:shadow-xl transition transform hover:-translate-y-1 dark:bg-slate-800 dark:border-nu-accent">
+                        <h4 class="text-xl font-bold text-gray-900 mb-6 flex items-center dark:text-white">
+                            <i data-lucide="book-open-text" class="w-6 h-6 ml-2 text-nu-accent"></i> المسار العلمي والإنساني
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg dark:bg-slate-700/50">
+                                <span class="text-gray-600 font-semibold dark:text-gray-300">عدد الفرق</span>
+                                <span class="font-bold text-2xl text-nu-accent">14</span>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-500 text-sm dark:text-gray-400">الطلاب (9)</span>
+                                    <span class="text-gray-500 text-sm dark:text-gray-400">الطالبات (20)</span>
+                                </div>
+                                <div class="flex h-2.5 w-full rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                                    <div class="bg-blue-400 h-full" style="width: 31%"></div>
+                                    <div class="bg-pink-400 h-full" style="width: 69%"></div>
+                                </div>
+                                <p class="text-center text-sm text-gray-400 mt-1 font-medium">المجموع: 29</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- END: Statistics Section -->
+
         <section id="tracks" class="py-16 md:py-24 relative z-10"> 
             <div class="container mx-auto px-4 relative z-10"> 
                 <h3 class="text-4xl font-bold text-center text-gray-900 mb-4 dark:text-white">مسارات الهاكاثون</h3>
@@ -861,7 +905,10 @@
             </div>
         </section>
 
+        
+
         <section id="criteria" class="py-16 md:py-24 relative z-10"> 
+            
             <div class="container mx-auto px-4 max-w-4xl relative z-10"> 
                 <h3 class="text-4xl font-bold text-center text-gray-900 mb-12 dark:text-white">معايير التحكيم</h3>
                 <p class="text-center text-xl text-gray-600 mb-8 max-w-2xl mx-auto dark:text-gray-400">سيتم تقييم المشاريع الابتكارية المقدمة بناءً على الأوزان والمعايير التالية:</p>
@@ -1339,7 +1386,8 @@
 
         <footer id="landing-footer" class="bg-gray-900 text-white py-8 dark:bg-gray-900">
             <div class="container mx-auto px-4 text-sm">
-                <div class="grid grid-cols-2 lg:grid-cols-8 gap-x-2 gap-y-1 mt-2 mx-auto max-w-lg lg:max-w-full">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-1 mt-2 mx-auto max-w-lg lg:max-w-full">
+                    <a href="#statistics" onclick="internalScroll('statistics')" class="text-gray-400 hover:text-white">الإحصائيات</a>
                     <a href="#tracks" onclick="internalScroll('tracks')" class="text-gray-400 hover:text-white">المسارات</a>
                     <a href="#rewards" onclick="internalScroll('rewards')" class="text-gray-400 hover:text-white">الجوائز</a>
                     <a href="#criteria" onclick="internalScroll('criteria')" class="text-gray-400 hover:text-white">المعايير</a>
@@ -1378,8 +1426,6 @@
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // *تعديل: تم إزالة md:text-4xl. الآن الجوال والآيباد يستخدمان text-4xl*
-    // *الحاسب فقط يستخدم lg:text-6xl*
     const createDigitBox = (value, label) => `
         <div class="countdown-digit p-3 lg:p-5 rounded-xl w-full"> 
             <div class="text-4xl lg:text-6xl font-mono font-bold">${String(value).padStart(2, '0')}</div>
@@ -1432,7 +1478,7 @@
             }
         }
         
-        // Function to handle accordion toggling - تم تحسين إغلاق العناصر الأخرى
+        // Function to handle accordion toggling
         function toggleAccordion(button) {
             const content = button.nextElementSibling;
             
@@ -1452,8 +1498,7 @@
                 // إغلاق
                 content.style.maxHeight = null;
             } else {
-                // فتح - يجب أن يكون ارتفاع المحتوى + الهامش السفلي (10px padding-bottom + 1rem padding-top)
-                // يتم قراءة ارتفاع المحتوى الفعلي (scrollHeight) ويتم تعيينه كحد أقصى للارتفاع (maxHeight)
+                // فتح
                 content.style.maxHeight = content.scrollHeight + 16 + 'px'; 
             }
         }
@@ -1485,33 +1530,25 @@
             lucide.createIcons();
         }
 
-        // ----------------------------------------------------------------------
-        // (الكود المحدث والنهائي لتحديد حالة الورشة)
-        // ----------------------------------------------------------------------
-
-        // ----------------------------------------------------------------------
-        // دالة تحديد حالة الورشة (محدثة لدعم الحالة الحضورية)
-        // ----------------------------------------------------------------------
         function getWorkshopStatus(workshopDateTime, type) {
             const now = new Date().getTime();
             const workshopTime = new Date(workshopDateTime).getTime();
 
-            // تحديد مدة الورشة: 5 ساعات للحضوري، و4 ساعات للأونلاين
+            // تحديد مدة الورشة
             const durationHours = (type === 'in-person') ? 5 : 4;
             const endWindow = workshopTime + (durationHours * 60 * 60 * 1000);
 
-            // 1. إذا تجاوز الوقت الحالي وقت الانتهاء -> منتهية
+            // 1. منتهية
             if (now >= endWindow) {
                 return 'ended';
             }
 
-            // 2. إذا كانت الورشة محددة كـ "حضوري"
+            // 2. حضوري
             if (type === 'in-person') {
-                // ستبقى حالتها "حضوري" طالما لم ينتهِ الوقت (سواء بدأت أم لم تبدأ بعد)
                 return 'in-person';
             }
 
-            // 3. المنطق العادي للورش المتبقية (أونلاين)
+            // 3. أونلاين
             if (now >= workshopTime && now <= endWindow) {
                 return 'available'; // انضم الآن
             } else {
@@ -1519,9 +1556,6 @@
             }
         }
 
-        // ----------------------------------------------------
-        // دالة إنشاء الأزرار (محدثة لإضافة تصميم زر "حضوري")
-        // ----------------------------------------------------
         function createWorkshopButton(status, link, recordingLink) {
             let mainButton = '';
             let text = '';
@@ -1541,12 +1575,10 @@
                     target = '_blank';
                     break;
 
-                case 'in-person': // <-- الحالة الجديدة
+                case 'in-person': 
                     text = 'حضوري';
-                    icon = 'map-pin'; // أيقونة الموقع
-                    // نستخدم نفس تنسيق "قريباً" لكن بدون حركة التحميل، أو يمكن تخصيص لون آخر
+                    icon = 'map-pin';
                     className += ' status-record'; 
-                    // جعل المؤشر يظهر كـ نص عادي لأنه لا يوجد رابط انضمام
                     onClickAttr = 'onclick="event.preventDefault();"';
                     break;
 
@@ -1588,12 +1620,7 @@
 
             return `<div class="flex flex-wrap items-center gap-2 mt-4">${mainButton}${recordingButton}</div>`;
         }
-        // ----------------------------------------------------
-        // تحديث: دالة التحديث لقراءة رابط التسجيل من HTML
-        // ----------------------------------------------------
-        // ----------------------------------------------------
-        // دالة التحديث (محدثة لقراءة نوع الورشة)
-        // ----------------------------------------------------
+
         function updateAllWorkshopButtons() {
             document.querySelectorAll('[data-workshop-status]').forEach(placeholder => {
                 const parentCard = placeholder.closest('div[id^="workshop-"]');
@@ -1622,22 +1649,19 @@
                 lucide.createIcons(); 
             });
         }
-        // ----------------------------------------------------------------------
 
 
         // Initial setup
         document.addEventListener('DOMContentLoaded', () => {
             initializeTheme();
             
-            // (تحديث ليعمل كل دقيقة - صحيح)
             updateAllWorkshopButtons();
             setInterval(updateAllWorkshopButtons, 60000); 
             
-            // تشغيل العد التنازلي
             updateCountdown();
             setInterval(updateCountdown, 1000);
             
-            // Canvas/Atom Drawing (Must run after DOMContentLoaded)
+            // Canvas/Atom Drawing
             const canvas = document.getElementById("atom-bg");
             const ctx = canvas.getContext("2d");
 
